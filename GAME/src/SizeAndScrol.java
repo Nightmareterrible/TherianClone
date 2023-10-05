@@ -114,7 +114,11 @@ public class SizeAndScrol {
 					if (d < GLOBALS.drag_circle_diameter && !clicked) {
 						try {
 						//System.out.println("do move");
-							Pers.move(mx, my);
+							if (GLOBALS.mode.toLowerCase().equals("player"))
+							{
+								System.out.println(GLOBALS.mode);
+								Pers.move(mx, my);
+							}
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
@@ -147,7 +151,11 @@ public class SizeAndScrol {
 						} // ≈сли кникнули не по жЄлтой окружности - то
 							// перемещаем персонажа в точку карты
 						else
-							Pers.move(mx, my);///это € убрал ибо не поимаю зачем и оно мешает городам 
+							if (GLOBALS.mode.toLowerCase().equals("player"))
+							{
+								System.out.println(GLOBALS.mode);
+								Pers.move(mx, my);
+							} 
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
