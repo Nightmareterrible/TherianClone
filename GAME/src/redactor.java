@@ -19,7 +19,7 @@ public class redactor implements MouseMotionListener, MouseListener{
 	public static void main(String[] args)  {
 		GLOBALS.mode = "editor";
 		new okno();
-		redactor r = new redactor();
+		redactor r = new redactor();//jbwuevgfu
 		
 	}
 	public redactor() {
