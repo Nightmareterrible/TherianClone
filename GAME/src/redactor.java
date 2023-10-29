@@ -1,3 +1,4 @@
+import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -10,22 +11,32 @@ import java.util.HashMap;
 import javax.net.ssl.KeyManager;
 import javax.swing.event.MouseInputListener;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 public class redactor implements MouseMotionListener, MouseListener{
 	
+			
 	Polygon p;
 	boolean leftMauseButonIsPresd;//переменная для отслежвания передвижения мышы с зажатой левой кнопкой мыши
 	HashMap<Polygon, String> location = new HashMap<>();//хранение полигона и его тип
+	static redactor r;
 	public static void main(String[] args)  {
+		
 		GLOBALS.mode = "editor";
 		new okno();
-		redactor r = new redactor();//jbwuevgfu
+		r = new redactor();//jbwuevgfu
 		System.out.println("neibniwbnvfew");
 		//bfbdfbdf
 		
 	}
 	public redactor() {
 		okno.p.addMouseListener(this);
+		
+		String json;
+		Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		json = gBilder.toJson(location);
 	}
 
 	@Override
@@ -41,8 +52,7 @@ public class redactor implements MouseMotionListener, MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		 System.out.println("cbsba");
-		 p = new Polygon() ;
+		
 		
 		
 	}
@@ -54,13 +64,28 @@ public class redactor implements MouseMotionListener, MouseListener{
 	public void mouseExited(MouseEvent e) {}
 
 	@Override
-	public void mousePressed(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {
+		System.out.println(e.getButton());
+		if(e.getButton()==1) {
+			
+			leftMauseButonIsPresd=true;
+			p = new Polygon() ;
+			
+		}
+	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(p.npoints>3){
+		if(e.getButton()==1&&p!=null &&p.npoints>=3){
 			location.put(p, "forest");
+			System.out.println("location is added");
+			leftMauseButonIsPresd=false;
+		}else if(e.getButton()==3){
+			p.addPoint(e.getX(), e.getY());
 		}
+	}
+	public void draw(Graphics g) {
+		
 	}
 
 
