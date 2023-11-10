@@ -96,8 +96,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 	public void shiftXY(Point2D shift) {
 		X += (float) shift.getX();
-		Y += (float) shift.getY();
-
+		Y += (float) shift.getY(); //rh
 	}
 
 	public void draw(Graphics g) {
