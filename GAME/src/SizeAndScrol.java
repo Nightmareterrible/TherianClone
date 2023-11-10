@@ -38,15 +38,16 @@ public class SizeAndScrol {
 		mouseMotionAd = new MouseMotionAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				if (redactor.r.leftMauseButonIsPresd == false) {
+				
 					paintmovecircle = true;
 					int mx = e.getX();
 					int my = e.getY();
 
 					double d = Math.sqrt(Math.pow((mx - pressedmx), 2) + Math.pow((my - pressedmy), 2));
-					if (d > GLOBALS.drag_circle_diameter) {
-						move_map_activated = true;
-
+					if (redactor.r.leftMauseButonIsPresd == false) {
+						if (d > GLOBALS.drag_circle_diameter) {
+							move_map_activated = true;
+					}
 						try {
 							Point2D shift = okno.p.map.move(mx - oldmx, my - oldmy);
 							Pers.shiftXY(shift);
@@ -66,10 +67,16 @@ public class SizeAndScrol {
 						oldmy = my;
 					}
 					okno.p.repaint();
-				}
+				
+			}
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				
+				
 			}
 		};
 
+		
 		mouseAd = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -124,6 +131,34 @@ public class SizeAndScrol {
 				move_map_activated = false;
 				clicked = false;
 
+				
+				
+				paintmovecircle = true;
+				
+
+				double d = Math.sqrt(Math.pow((mx - pressedmx), 2) + Math.pow((my - pressedmy), 2));
+				if (d > GLOBALS.drag_circle_diameter) {
+					move_map_activated = true;
+
+					try {
+						Point2D shift = okno.p.map.move(mx - oldmx, my - oldmy);
+						Pers.shiftXY(shift);
+						for (int i = 0; i < okno.p.map.villageList.size() - 1; i++) {
+							okno.p.map.villageList.get(i).shiftXY(shift);
+						}
+						if (redactor.r != null)
+							redactor.r.shiftXY(shift);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+
+					// ВАЖНО !!! После изменения - эти координаты больше нельзя
+					// принимать как
+					// исходные (поэтому добавлены pressedmx, ...y)
+					oldmx = mx;
+					oldmy = my;
+				}
+				okno.p.repaint();
 			}
 
 			// -------------------------------------------------------
