@@ -15,6 +15,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.awt.peer.KeyboardFocusManagerPeer;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,8 +30,14 @@ import java.util.HashMap;
 import java.util.Set;
 
 import javax.net.ssl.KeyManager;
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.event.MouseInputListener;
 import javax.swing.text.StyledEditorKit.ForegroundAction;
 
@@ -57,6 +64,9 @@ public class redactor implements MouseMotionListener, MouseListener {
 	int drowingX;
 	int drowingY;
 	boolean deletPoligon;
+	JRadioButton radBtn[] = new JRadioButton[3];
+	String[] nameLocation = { "forest", "city", "woter" };
+	ButtonGroup bg = new ButtonGroup();
 
 	public static void main(String[] args) {
 
@@ -115,6 +125,17 @@ public class redactor implements MouseMotionListener, MouseListener {
 			}
 
 		});
+
+		for (int i = 0; i < nameLocation.length; i++) {
+			radBtn[i] = new JRadioButton();
+
+			radBtn[i].setText(nameLocation[i]);
+			radBtn[i].setBounds(240, i * 30, 100, 30);
+			bg.add(radBtn[i]);
+			okno.p.add(radBtn[i]);
+
+		}
+		radBtn[0].setSelected(true);
 		okno.p.add(btnNewButton_1);
 		okno.p.add(btnNewButton_2);
 		okno.p.addMouseListener(this);
@@ -123,8 +144,11 @@ public class redactor implements MouseMotionListener, MouseListener {
 	}
 
 	private void readJson(String json) {
-
+		if (json==null) {
+			return;
+		}
 		Gson g = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		
 		String[] jsons = json.split("<br>");
 
 		for (int i = 0; i < jsons.length; i++) {
@@ -136,7 +160,8 @@ public class redactor implements MouseMotionListener, MouseListener {
 			for (int j = 0; j < arreyPoligonClas.size(); j++) {
 				p.addPoint(arreyPoligonClas.get(j).x, arreyPoligonClas.get(j).y);
 			}
-			location.put(p, arreyPoligonClas.get(0).TypeLocation);
+			location.put(p, arreyPoligonClas.get(i).TypeLocation);
+
 			keys.add(p);
 		}
 		p = null;
@@ -144,6 +169,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 	protected void writeJson() {
+		
 		String json = null;
 		Gson g = new Gson();
 
@@ -166,6 +192,9 @@ public class redactor implements MouseMotionListener, MouseListener {
 		}
 
 		File f = new File("location.txt");
+		if (json==null) {
+			return;
+		}
 		try {
 			f.createNewFile();
 			FileOutputStream ff = new FileOutputStream(f);
@@ -211,7 +240,9 @@ public class redactor implements MouseMotionListener, MouseListener {
 	public void mousePressed(MouseEvent e) {
 		drowingX = e.getX();
 		drowingY = e.getY();
-		if (e.getButton() == 1 && p != null) {
+		
+		if (e.getButton() == 1 &&deletPoligon == false) {
+			p = new Polygon();
 			leftMauseButonIsPresd = true;// это нужно чтобы карта не двигалась во время редатирования
 			p.addPoint((int) (((e.getX()) / Map.scale) - X), (int) ((e.getY()) / Map.scale - Y));// первый поинт где
 																									// зажата левая
@@ -227,13 +258,18 @@ public class redactor implements MouseMotionListener, MouseListener {
 		if (!deletPoligon) {
 
 			if (e.getButton() == 1 && p != null && p.npoints >= 3) {// если точек больше 3 то создаем полигон
-				location.put(p, "forest");// по дефолту это будет лес
+				for (int i = 0; i < radBtn.length; i++) {
+					if (radBtn[i].isSelected()) {
+						location.put(p, radBtn[i].getText());// по дефолту это будет лес
+					}
+				}
 				keys.add(p); // также сохраняем ключик
 
-				p = new Polygon();
+				p = null;
 				leftMauseButonIsPresd = false;
+
 			} else if (e.getButton() == 1) {
-				p = new Polygon();
+				p = null;
 				leftMauseButonIsPresd = false;
 
 			} else if (e.getButton() == 3 && p != null && leftMauseButonIsPresd == true) {
@@ -244,12 +280,12 @@ public class redactor implements MouseMotionListener, MouseListener {
 																									// поинт в полигон
 
 			}
-		}else {
+		} else {
 			for (int i = 0; i < keys.size(); i++) {
-				if(keys.get(i).contains((int)((e.getX()) / Map.scale - X) , (int) ((e.getY()) / Map.scale) - Y)) {
+				if (keys.get(i).contains((int) ((e.getX()) / Map.scale - X), (int) ((e.getY()) / Map.scale) - Y)) {
 					location.remove(keys.get(i));
 					keys.remove(i);
-					
+					deletPoligon = false;
 				}
 			}
 		}
@@ -261,13 +297,28 @@ public class redactor implements MouseMotionListener, MouseListener {
 	}
 
 	public void draw(Graphics g) {
-		g.setColor(Color.YELLOW);
+
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2.5f));
 		for (int i = 0; i < keys.size(); i++) {
 
 			for (int j = 0; j < keys.get(i).npoints; j++) {
+				for (int a = 0; a < radBtn.length; a++) {
+					if (radBtn[a].isSelected()) {
+						switch (location.get(keys.get(i))) {
+						case ("forest"):
+							g.setColor(Color.GREEN);
+							break;
+						case ("city"):
+							g.setColor(Color.YELLOW);
+							break;
+						case ("woter"):
+							g.setColor(Color.BLUE);
+							break;
 
+						}
+					}
+				}
 				if (keys.get(i).npoints > j + 1) {
 					g2.drawLine((int) ((Math.round(keys.get(i).xpoints[j]) + X) * Map.scale),
 							(int) ((Math.round(keys.get(i).ypoints[j]) + Y) * Map.scale),
@@ -284,7 +335,22 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 		}
 		if (leftMauseButonIsPresd == true && p != null && p.npoints >= 1) {
+			for (int a = 0; a < radBtn.length; a++) {
+				if (radBtn[a].isSelected()) {
+					switch (radBtn[a].getText()) {
+					case ("forest"):
+						g.setColor(Color.GREEN);
+						break;
+					case ("city"):
+						g.setColor(Color.YELLOW);
+						break;
+					case ("woter"):
+						g.setColor(Color.BLUE);
+						break;
 
+					}
+				}
+			}
 			g2.drawOval((int) ((Math.round(p.xpoints[0]) + X) * Map.scale - 5),
 					(int) ((Math.round(p.ypoints[0]) + Y) * Map.scale - 5), 10, 10);
 			g2.drawOval((int) ((Math.round(p.xpoints[0]) + X) * Map.scale - 1),
@@ -302,7 +368,5 @@ public class redactor implements MouseMotionListener, MouseListener {
 		}
 
 	}
-
-	
 
 }
