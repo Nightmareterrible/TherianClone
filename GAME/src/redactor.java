@@ -351,6 +351,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 					}
 				}
 			}
+			System.out.print("vwjbvewew");
 			g2.drawOval((int) ((Math.round(p.xpoints[0]) + X) * Map.scale - 5),
 					(int) ((Math.round(p.ypoints[0]) + Y) * Map.scale - 5), 10, 10);
 			g2.drawOval((int) ((Math.round(p.xpoints[0]) + X) * Map.scale - 1),
