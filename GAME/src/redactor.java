@@ -56,6 +56,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 	int Y;
 	int drowingX;
 	int drowingY;
+	boolean deletPoligon;
 
 	public static void main(String[] args) {
 
@@ -89,7 +90,6 @@ public class redactor implements MouseMotionListener, MouseListener {
 				JOptionPane.showMessageDialog(null, "read:\n" + e.toString());
 				e.printStackTrace();
 			}
-		
 
 		JButton btnNewButton_1 = new JButton("сохранить полигоны");
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -103,8 +103,20 @@ public class redactor implements MouseMotionListener, MouseListener {
 			}
 
 		});
-		okno.p.add(btnNewButton_1);
+		JButton btnNewButton_2 = new JButton("удалить полигоны");
+		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnNewButton_2.setBounds(120, 0, 120, 70);
+		btnNewButton_2.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deletPoligon = true;
+
+			}
+
+		});
+		okno.p.add(btnNewButton_1);
+		okno.p.add(btnNewButton_2);
 		okno.p.addMouseListener(this);
 		okno.p.addMouseMotionListener(this);
 
@@ -114,32 +126,20 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 		Gson g = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 		String[] jsons = json.split("<br>");
-		
-		
-	
-		StringBuilder temp;
-		
+
 		for (int i = 0; i < jsons.length; i++) {
-			
-			Type listType = new TypeToken<ArrayList<POLIGON>>() {}.getType();
-			ArrayList<POLIGON> arreyPoligomClas = new Gson().fromJson(jsons[i], listType);
+
+			Type listType = new TypeToken<ArrayList<POLIGON>>() {
+			}.getType();
+			ArrayList<POLIGON> arreyPoligonClas = new Gson().fromJson(jsons[i], listType);
 			p = new Polygon();
-			for (int j = 0; j < arreyPoligomClas.size(); j++) {
-				p.addPoint(arreyPoligomClas.get(j).x, arreyPoligomClas.get(j).y);
-				
+			for (int j = 0; j < arreyPoligonClas.size(); j++) {
+				p.addPoint(arreyPoligonClas.get(j).x, arreyPoligonClas.get(j).y);
 			}
-			location.put(p, arreyPoligomClas.get(0).TypeLocation);
+			location.put(p, arreyPoligonClas.get(0).TypeLocation);
 			keys.add(p);
-			
 		}
 		p = null;
-		
-		
-		
-		
-		
-		
-
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,9 +159,9 @@ public class redactor implements MouseMotionListener, MouseListener {
 				arreyPoligomClas.add(pol);
 			}
 			if (json == null) {
-				json = g.toJson(arreyPoligomClas)+ "<br>";
+				json = g.toJson(arreyPoligomClas) + "<br>";
 			} else {
-				json = json  + g.toJson(arreyPoligomClas)+"<br>";
+				json = json + g.toJson(arreyPoligomClas) + "<br>";
 			}
 		}
 
@@ -211,7 +211,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 	public void mousePressed(MouseEvent e) {
 		drowingX = e.getX();
 		drowingY = e.getY();
-		if (e.getButton() == 1&& p!=null) {
+		if (e.getButton() == 1 && p != null) {
 			leftMauseButonIsPresd = true;// это нужно чтобы карта не двигалась во время редатирования
 			p.addPoint((int) (((e.getX()) / Map.scale) - X), (int) ((e.getY()) / Map.scale - Y));// первый поинт где
 																									// зажата левая
@@ -224,22 +224,34 @@ public class redactor implements MouseMotionListener, MouseListener {
 	public void mouseReleased(MouseEvent e) {// long left button and pres right button
 		drowingX = e.getX();
 		drowingY = e.getY();
-		if (e.getButton() == 1 && p != null && p.npoints >= 3) {// если точек больше 3 то создаем полигон
-			location.put(p, "forest");// по дефолту это будет лес
-			keys.add(p); // также сохраняем ключик
+		if (!deletPoligon) {
 
-			p = new Polygon();
-			leftMauseButonIsPresd = false;
-		} else if (e.getButton() == 1) {
-			p = new Polygon();
-			leftMauseButonIsPresd = false;
+			if (e.getButton() == 1 && p != null && p.npoints >= 3) {// если точек больше 3 то создаем полигон
+				location.put(p, "forest");// по дефолту это будет лес
+				keys.add(p); // также сохраняем ключик
 
-		} else if (e.getButton() == 3 && p != null && leftMauseButonIsPresd == true) {
+				p = new Polygon();
+				leftMauseButonIsPresd = false;
+			} else if (e.getButton() == 1) {
+				p = new Polygon();
+				leftMauseButonIsPresd = false;
 
-			p.addPoint((int) ((e.getX()) / Map.scale - X), (int) ((e.getY()) / Map.scale) - Y);// при нажаии правой
-																								// кнопки мыши добавляем
-																								// поинт в полигон
+			} else if (e.getButton() == 3 && p != null && leftMauseButonIsPresd == true) {
 
+				p.addPoint((int) ((e.getX()) / Map.scale - X), (int) ((e.getY()) / Map.scale) - Y);// при нажаии правой
+																									// кнопки мыши
+																									// добавляем
+																									// поинт в полигон
+
+			}
+		}else {
+			for (int i = 0; i < keys.size(); i++) {
+				if(keys.get(i).contains((int)((e.getX()) / Map.scale - X) , (int) ((e.getY()) / Map.scale) - Y)) {
+					location.remove(keys.get(i));
+					keys.remove(i);
+					
+				}
+			}
 		}
 	}
 
@@ -290,5 +302,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 		}
 
 	}
+
+	
 
 }
