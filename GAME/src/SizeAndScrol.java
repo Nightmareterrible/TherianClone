@@ -44,7 +44,8 @@ public class SizeAndScrol {
 					int my = e.getY();
 
 					double d = Math.sqrt(Math.pow((mx - pressedmx), 2) + Math.pow((my - pressedmy), 2));
-					if (redactor.r.leftMauseButonIsPresd == false) {
+					if (redactor.r == null ||
+							redactor.r.leftMauseButonIsPresd == false) {
 						if (d > GLOBALS.drag_circle_diameter) {
 							move_map_activated = true;
 					}
