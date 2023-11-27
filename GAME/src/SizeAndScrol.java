@@ -38,36 +38,46 @@ public class SizeAndScrol {
 		mouseMotionAd = new MouseMotionAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				paintmovecircle = true;
-				int mx = e.getX();
-				int my = e.getY();
+				
+					paintmovecircle = true;
+					int mx = e.getX();
+					int my = e.getY();
 
-				double d = Math.sqrt(Math.pow((mx - pressedmx), 2)
-						+ Math.pow((my - pressedmy), 2));
-				if (d > GLOBALS.drag_circle_diameter) {
-					move_map_activated = true;
-
-					try {
-						Point2D shift = okno.p.map.move(mx - oldmx, my - oldmy);
-						Pers.shiftXY(shift);
-						for (int i = 0; i < okno.p.map.villageList.size() - 1; i++) {
-							okno.p.map.villageList.get(i).shiftXY(shift);
+					double d = Math.sqrt(Math.pow((mx - pressedmx), 2) + Math.pow((my - pressedmy), 2));
+					if (redactor.r == null ||
+							redactor.r.leftMauseButonIsPresd == false) {
+						if (d > GLOBALS.drag_circle_diameter) {
+							move_map_activated = true;
+					}
+						try {
+							Point2D shift = okno.p.map.move(mx - oldmx, my - oldmy);
+							Pers.shiftXY(shift);
+							for (int i = 0; i < okno.p.map.villageList.size() - 1; i++) {
+								okno.p.map.villageList.get(i).shiftXY(shift);
+							}
+							if (redactor.r != null)
+								redactor.r.shiftXY(shift);
+						} catch (Exception e1) {
+							e1.printStackTrace();
 						}
 
-					} catch (Exception e1) {
-						e1.printStackTrace();
+						// ВАЖНО !!! После изменения - эти координаты больше нельзя
+						// принимать как
+						// исходные (поэтому добавлены pressedmx, ...y)
+						oldmx = mx;
+						oldmy = my;
 					}
-
-					// ВАЖНО !!! После изменения - эти координаты больше нельзя
-					// принимать как
-					// исходные (поэтому добавлены pressedmx, ...y)
-					oldmx = mx;
-					oldmy = my;
-				}
-				okno.p.repaint();
+					okno.p.repaint();
+				
+			}
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				
+				
 			}
 		};
 
+		
 		mouseAd = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -77,8 +87,7 @@ public class SizeAndScrol {
 				int mx = e.getX();
 				int my = e.getY();
 				if (Pers.CircleX != -100 && Pers.CircleY != -100) {
-					if (Pers.dist(Pers.CircleX + Pers.PersR, Pers.CircleY
-							+ Pers.PersR, mx, my) < Pers.PersR) {
+					if (Pers.dist(Pers.CircleX + Pers.PersR, Pers.CircleY + Pers.PersR, mx, my) < Pers.PersR) {
 						clicked = true;// защита от mouseReleased - чтобы не
 										// было Pers.Move
 					}
@@ -93,13 +102,11 @@ public class SizeAndScrol {
 
 				// ////////////////////////////////////////////////////////////////
 				for (int i = 0; i < okno.p.map.villageList.size() - 1; i++) {
-					village vil = okno.p.map.villageList.get(i);//не знаю откуда тут еще +30 пиксилей
-					if (	vil.X <= mx / Map.scale +30&&
-						    vil.Y <= my/ Map.scale+30 &&
-							vil.X + vil.vilagePictureWidth >= mx / Map.scale+30 &&
-							vil.Y + vil.vilagePictureHeight >= my / Map.scale+30
-							) {
-						
+					village vil = okno.p.map.villageList.get(i);// не знаю откуда тут еще +30 пиксилей
+					if (vil.X <= mx / Map.scale + 30 && vil.Y <= my / Map.scale + 30
+							&& vil.X + vil.vilagePictureWidth >= mx / Map.scale + 30
+							&& vil.Y + vil.vilagePictureHeight >= my / Map.scale + 30) {
+
 						okno.p.map.villageList.get(i).citeIsOpen = true;
 						System.out.println("вы открыли город ");
 						return;
@@ -109,12 +116,14 @@ public class SizeAndScrol {
 				mousepressed = false;
 				paintmovecircle = false;
 				if (!move_map_activated) {
-					double d = Math.sqrt(Math.pow((mx - pressedmx), 2)
-							+ Math.pow((my - pressedmy), 2));
+					double d = Math.sqrt(Math.pow((mx - pressedmx), 2) + Math.pow((my - pressedmy), 2));
 					if (d < GLOBALS.drag_circle_diameter && !clicked) {
 						try {
-						//System.out.println("do move");
-							Pers.move(mx, my);
+							// System.out.println("do move");
+							if (GLOBALS.mode.toLowerCase().equals("player")) {
+								System.out.println(GLOBALS.mode);
+								Pers.move(mx, my);
+							}
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
@@ -123,6 +132,34 @@ public class SizeAndScrol {
 				move_map_activated = false;
 				clicked = false;
 
+				
+				
+				paintmovecircle = true;
+				
+
+				double d = Math.sqrt(Math.pow((mx - pressedmx), 2) + Math.pow((my - pressedmy), 2));
+				if (d > GLOBALS.drag_circle_diameter) {
+					move_map_activated = true;
+
+					try {
+						Point2D shift = okno.p.map.move(mx - oldmx, my - oldmy);
+						Pers.shiftXY(shift);
+						for (int i = 0; i < okno.p.map.villageList.size() - 1; i++) {
+							okno.p.map.villageList.get(i).shiftXY(shift);
+						}
+						if (redactor.r != null)
+							redactor.r.shiftXY(shift);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+
+					// ВАЖНО !!! После изменения - эти координаты больше нельзя
+					// принимать как
+					// исходные (поэтому добавлены pressedmx, ...y)
+					oldmx = mx;
+					oldmy = my;
+				}
+				okno.p.repaint();
 			}
 
 			// -------------------------------------------------------
@@ -138,16 +175,17 @@ public class SizeAndScrol {
 							// персонажу
 							// расстояние от центра окружности до mx,my должно
 							// быть меньше радиуса
-							if (Pers.dist(Pers.CircleX + Pers.PersR,
-									Pers.CircleY + Pers.PersR, mx, my) < Pers.PersR) {
+							if (Pers.dist(Pers.CircleX + Pers.PersR, Pers.CircleY + Pers.PersR, mx, my) < Pers.PersR) {
 								clicked = true; // защита от mouseReleased -
 												// чтобы не было Pers.Move
 								okno.p.map.moveToPers();
 							}
 						} // Если кникнули не по жёлтой окружности - то
 							// перемещаем персонажа в точку карты
-						else
-							Pers.move(mx, my);///это я убрал ибо не поимаю зачем и оно мешает городам 
+						else if (GLOBALS.mode.toLowerCase().equals("player")) {
+							System.out.println(GLOBALS.mode);
+							Pers.move(mx, my);
+						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -158,12 +196,11 @@ public class SizeAndScrol {
 		mouseWhil = new MouseAdapter() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (okno.p.map.loadingImages.size() > 0)
-				{
+				if (okno.p.map.loadingImages.size() > 0) {
 					System.out.println("Скролл отключён");
 					return; // если скроллить во время загрузки изображения - будет ошибка
 				}
-				
+
 				// Если scale < 1.0, то мы карту уменьшаем
 				// Если scale > 1.0, то мы карту увеличиваем
 				double scale = okno.p.map.scale;
@@ -177,7 +214,7 @@ public class SizeAndScrol {
 				double koeffX = okno.p.getWidth() * 1.0 / okno.p.map.mapW;
 				double koeffY = okno.p.getHeight() * 1.0 / okno.p.map.mapH;
 				koeffX = Math.max(koeffX, koeffY); // if (koeffY > koeffX) koeffX = koeffY;
-				scale = Math.max(scale, koeffX);  // if (koeffX > scale) scale = koeffX;
+				scale = Math.max(scale, koeffX); // if (koeffX > scale) scale = koeffX;
 				okno.p.map.scale = scale;
 				okno.p.repaint();
 			}

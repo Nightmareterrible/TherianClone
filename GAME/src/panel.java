@@ -71,7 +71,8 @@ class panel extends JPanel {
 
 		}
 		Pers.draw(g);
-
+		if(redactor.r!=null)
+		redactor.r.draw(g);
 		
 		if (sizeAndScrol.paintmovecircle) {
 			int W = (int) GLOBALS.drag_circle_diameter;
