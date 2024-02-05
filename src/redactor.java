@@ -53,9 +53,9 @@ import com.google.gson.stream.JsonWriter;
 public class redactor implements MouseMotionListener, MouseListener {
 
 	Polygon p;
-	boolean leftMauseButonIsPresd;// ���������� ��� ����������� ������������ ���� � ������� ����� ������� ����
-	HashMap<Polygon, String> location = new HashMap<>();// �������� �������� � ��� ���
-	ArrayList<Polygon> keys = new ArrayList<>();// �.�. ������� ��������� ������ ��� ���� ����� ������� ��� ����� �����
+	boolean leftMauseButonIsPresd;
+	HashMap<Polygon, String> location = new HashMap<>();
+	ArrayList<Polygon> keys = new ArrayList<>();
 	// ���� ����
 	static redactor r;
 	int X;
@@ -249,19 +249,17 @@ public class redactor implements MouseMotionListener, MouseListener {
 					p.ypoints[0] <= (int) (((e.getY()) / Map.scale) - Y)+10 &&
 					p.npoints>=3)
 			{
-
 				keys.add(p);
 				p = new Polygon();
 				return;
 			}
 
-
-
-			if(p==null)
+			if(p==null) {
 				p = new Polygon();
-			leftMauseButonIsPresd = true;// ��� ����� ����� ����� �� ��������� �� ����� �������������
-			p.addPoint((int) (((e.getX()) / Map.scale) - X), (int) ((e.getY()) / Map.scale - Y));// ������ ����� ���
-			// ������ �����
+			}
+			leftMauseButonIsPresd = true;
+			p.addPoint((int) (((e.getX()) / Map.scale) - X), (int) ((e.getY()) / Map.scale - Y));
+
 
 		}else if (e.getButton() == 3 && deletPoligon == false && p!=null){
 			Polygon tempPoligon;
@@ -281,10 +279,10 @@ public class redactor implements MouseMotionListener, MouseListener {
 		drowingY = e.getY();
 		if (!deletPoligon) {
 
-			if (e.getButton() == 1 && p != null && p.npoints >= 3) {// ���� ����� ������ 3 �� ������� �������
+			if (e.getButton() == 1 && p != null && p.npoints >= 3) {
 				for (int i = 0; i < radBtn.length; i++) {
 					if (radBtn[i].isSelected()) {
-						location.put(p, radBtn[i].getText());// �� ������� ��� ����� ���
+						location.put(p, radBtn[i].getText());
 					}
 				}
 
@@ -296,10 +294,8 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 			} else if (e.getButton() == 1 && p != null ) {
 
-				p.addPoint((int) ((e.getX()) / Map.scale - X), (int) ((e.getY()) / Map.scale) - Y);// ��� ������ ������
-				// ������ ����
-				// ���������
-				// ����� � �������
+				p.addPoint((int) ((e.getX()) / Map.scale - X), (int) ((e.getY()) / Map.scale) - Y);
+
 
 			}
 		} else {

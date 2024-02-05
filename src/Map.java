@@ -370,7 +370,8 @@ class Map {
 			 * e.printStackTrace(); }
 			 */
 			loadingImages.remove(res.getPath()); // ����� ������ ��������� �����
-		}
+		}//зачем нужен этот поток ?
+
 	}
 
 	public void loadImage(URL resource) throws Exception {
