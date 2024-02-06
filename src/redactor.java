@@ -52,22 +52,23 @@ import com.google.gson.stream.JsonWriter;
 
 public class redactor implements MouseMotionListener, MouseListener {
 
-	Polygon p;
+
+	MapLocation MapLoc;
 	boolean leftMauseButonIsPresd;
-	HashMap<Polygon, String> location = new HashMap<>();
-	ArrayList<Polygon> keys = new ArrayList<>();
-	// ���� ����
+	ArrayList<MapLocation> locations = new ArrayList<>();//все локации
+
 	static redactor r;
 	int X;
 	int Y;
 	int drowingX;
 	int drowingY;
 	boolean deletPoligon;
-	JRadioButton radBtn[] = new JRadioButton[3];
-	String[] nameLocation = { "forest", "city", "woter" };
+	JRadioButton radBtn[] = new JRadioButton[3];//типы локаций
+	String[] nameLocation = { "forest", "city", "woter" };//имена локаций
 	ButtonGroup bg = new ButtonGroup();
 
 	public static void main(String[] args) {
+		HashMap<String,String> mapp =  new HashMap<>();
 
 		GLOBALS.mode = "editor";
 		new okno();
@@ -77,10 +78,10 @@ public class redactor implements MouseMotionListener, MouseListener {
 	}
 
 	public redactor() {
-		p = new Polygon();
+
 		String json = null;
 		Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-		// json = gBilder.toJson(location);
+
 
 		File f = new File("location.txt");
 
@@ -100,7 +101,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 				e.printStackTrace();
 			}
 
-		JButton btnNewButton_1 = new JButton("��������� ��������");
+		JButton btnNewButton_1 = new JButton("сохранить");
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnNewButton_1.setBounds(0, 0, 120, 70);
 		btnNewButton_1.addActionListener(new ActionListener() {
@@ -112,7 +113,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 			}
 
 		});
-		JButton btnNewButton_2 = new JButton("������� ��������");
+		JButton btnNewButton_2 = new JButton("удалить");
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnNewButton_2.setBounds(120, 0, 120, 70);
 		btnNewButton_2.addActionListener(new ActionListener() {
@@ -143,7 +144,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 	}
 
 	private void readJson(String json) {
-		if (json==null) {
+	/*	if (json==null) {
 			return;
 		}
 		Gson g = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -164,12 +165,12 @@ public class redactor implements MouseMotionListener, MouseListener {
 			keys.add(p);
 		}
 		p = null;
-	}
+	*/}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	protected void writeJson() {
 
-		String json = null;
+		/*String json = null;
 		Gson g = new Gson();
 
 		for (int j = 0; j < keys.size(); j++) {
@@ -207,7 +208,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "write:\n" + e.toString());
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	@Override
@@ -241,33 +242,35 @@ public class redactor implements MouseMotionListener, MouseListener {
 		drowingX = e.getX();
 		drowingY = e.getY();
 
-		if (e.getButton() == 1 &&deletPoligon == false) {
+		if (e.getButton() == 1 &&deletPoligon == false&&locations.size()!=0) {
 
-			if (p.xpoints[0] >= (int) (((e.getX()) / Map.scale) - X)-10 &&
-					p.xpoints[0]<= (int) (((e.getX()) / Map.scale) - X)+10 &&
-					p.ypoints[0] >= (int) (((e.getY()) / Map.scale) - Y)-10 &&
-					p.ypoints[0] <= (int) (((e.getY()) / Map.scale) - Y)+10 &&
-					p.npoints>=3)
+			if (locations.get(locations.size()-1).p.xpoints[0] >= (int) (((e.getX()) / Map.scale) - X)-10 &&
+					locations.get(locations.size()-1).p .xpoints[0]<= (int) (((e.getX()) / Map.scale) - X)+10 &&
+					locations.get(locations.size()-1).p .ypoints[0] >= (int) (((e.getY()) / Map.scale) - Y)-10 &&
+					locations.get(locations.size()-1).p .ypoints[0] <= (int) (((e.getY()) / Map.scale) - Y)+10 &&
+					locations.get(locations.size()-1).p .npoints>=3)
+
 			{
-				keys.add(p);
-				p = new Polygon();
+				locations.add(MapLoc);
+				MapLoc = new MapLocation();
 				return;
 			}
 
-			if(p==null) {
-				p = new Polygon();
+			if(MapLoc==null) {
+				MapLoc = new MapLocation();
+
 			}
-			leftMauseButonIsPresd = true;
-			p.addPoint((int) (((e.getX()) / Map.scale) - X), (int) ((e.getY()) / Map.scale - Y));
+
+			MapLoc.p.addPoint((int) (((e.getX()) / Map.scale) - X), (int) ((e.getY()) / Map.scale - Y));//добавление точки полигона
 
 
-		}else if (e.getButton() == 3 && deletPoligon == false && p!=null){
+		}else if (e.getButton() == 3 && deletPoligon == false && locations.get(locations.size()-1).p !=null){
 			Polygon tempPoligon;
-			tempPoligon = p;
-			p = new Polygon();
+			tempPoligon = locations.get(locations.size()-1).p;
+			locations.get(locations.size()-1).p = new Polygon();
 
 			for (int i = 0; i < tempPoligon.npoints-1; i++) {
-				p.addPoint(tempPoligon.xpoints[i],tempPoligon.ypoints[i]);
+				locations.get(locations.size()-1).p.addPoint(tempPoligon.xpoints[i],tempPoligon.ypoints[i]);
 
 			}
 		}
@@ -277,36 +280,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 	public void mouseReleased(MouseEvent e) {// long left button and pres right button
 		drowingX = e.getX();
 		drowingY = e.getY();
-		if (!deletPoligon) {
 
-			if (e.getButton() == 1 && p != null && p.npoints >= 3) {
-				for (int i = 0; i < radBtn.length; i++) {
-					if (radBtn[i].isSelected()) {
-						location.put(p, radBtn[i].getText());
-					}
-				}
-
-				leftMauseButonIsPresd = false;
-
-			} else if (e.getButton() == 1) {
-
-				leftMauseButonIsPresd = false;
-
-			} else if (e.getButton() == 1 && p != null ) {
-
-				p.addPoint((int) ((e.getX()) / Map.scale - X), (int) ((e.getY()) / Map.scale) - Y);
-
-
-			}
-		} else {
-			for (int i = 0; i < keys.size(); i++) {
-				if (keys.get(i).contains((int) ((e.getX()) / Map.scale - X), (int) ((e.getY()) / Map.scale) - Y)) {
-					location.remove(keys.get(i));
-					keys.remove(i);
-					deletPoligon = false;
-				}
-			}
-		}
 	}
 
 	public void shiftXY(Point2D shift) {
@@ -318,9 +292,9 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2.5f));
-		for (int i = 0; i < keys.size(); i++) {
+		for (int i = 0; i < locations.size(); i++) {
 
-			for (int j = 0; j < keys.get(i).npoints; j++) {
+			for (int j = 0; j < locations.get(i).p.npoints; j++) {
 				/*for (int a = 0; a < radBtn.length; a++) {
 					if (radBtn[a].isSelected()) {
 						switch (location.get(keys.get(i))) {
@@ -337,22 +311,22 @@ public class redactor implements MouseMotionListener, MouseListener {
 						}
 					}
 				}*/
-				if (keys.get(i).npoints > j + 1) {
-					g2.drawLine((int) ((Math.round(keys.get(i).xpoints[j]) + X) * Map.scale),
-							(int) ((Math.round(keys.get(i).ypoints[j]) + Y) * Map.scale),
-							(int) ((Math.round(keys.get(i).xpoints[j + 1]) + X) * Map.scale),
-							(int) ((Math.round(keys.get(i).ypoints[j + 1]) + Y) * Map.scale));
+				if (locations.get(i).p.npoints > j + 1) {//отврисовка полигона во время редактирования и создания
+					g2.drawLine((int) ((Math.round(locations.get(i).p.xpoints[j]) + X) * Map.scale),
+							(int) ((Math.round(locations.get(i).p.ypoints[j]) + Y) * Map.scale),
+							(int) ((Math.round(locations.get(i).p.xpoints[j + 1]) + X) * Map.scale),
+							(int) ((Math.round(locations.get(i).p.ypoints[j + 1]) + Y) * Map.scale));
 				} else {
-					g2.drawLine((int) ((Math.round(keys.get(i).xpoints[j]) + X) * Map.scale),
-							(int) ((Math.round(keys.get(i).ypoints[j]) + Y) * Map.scale),
-							(int) ((Math.round(keys.get(i).xpoints[0]) + X) * Map.scale),
-							(int) ((Math.round(keys.get(i).ypoints[0]) + Y) * Map.scale));
+					g2.drawLine((int) ((Math.round(locations.get(i).p.xpoints[j]) + X) * Map.scale),
+							(int) ((Math.round(locations.get(i).p.ypoints[j]) + Y) * Map.scale),
+							(int) ((Math.round(locations.get(i).p.xpoints[0]) + X) * Map.scale),
+							(int) ((Math.round(locations.get(i).p.ypoints[0]) + Y) * Map.scale));
 
 				}
 			}
 
 		}
-		if (p != null && p.npoints >= 1) {
+		if (MapLoc != null && locations.get(locations.size()-1).p.npoints >= 1) {
 			for (int a = 0; a < radBtn.length; a++) {
 				if (radBtn[a].isSelected()) {
 					switch (radBtn[a].getText()) {
@@ -370,22 +344,23 @@ public class redactor implements MouseMotionListener, MouseListener {
 				}
 			}
 
-			g2.drawOval((int) ((Math.round(p.xpoints[0]) + X) * Map.scale - 5),
-					(int) ((Math.round(p.ypoints[0]) + Y) * Map.scale - 5), 10, 10);
-			g2.drawOval((int) ((Math.round(p.xpoints[0]) + X) * Map.scale - 1),
-					(int) ((Math.round(p.ypoints[0]) + Y) * Map.scale - 1), 1, 1);
-			if (drowingX != 0 && drowingY != 0)
-				g2.drawLine((int) ((Math.round(p.xpoints[p.npoints - 1]) + X) * Map.scale),
-						(int) ((Math.round(p.ypoints[p.npoints - 1]) + Y) * Map.scale), drowingX, drowingY);
-			for (int i = 0; i < p.npoints; i++) {
-				if (p.npoints > i + 1)
-					g2.drawLine((int) ((Math.round(p.xpoints[i]) + X) * Map.scale),
-							(int) ((Math.round(p.ypoints[i]) + Y) * Map.scale),
-							(int) ((Math.round(p.xpoints[i + 1]) + X) * Map.scale),
-							(int) ((Math.round(p.ypoints[i + 1]) + Y) * Map.scale));
+			g2.drawOval((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[0]) + X) * Map.scale - 5),
+					(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[0]) + Y) * Map.scale - 5), 10, 10);//большая точка в начело полигона на менте создания пполигона
+			g2.drawOval((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[0]) + X) * Map.scale - 1),
+					(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[0]) + Y) * Map.scale - 1), 1, 1);//маленькая точка в начело полигона на менте создания пполигона
+			if (drowingX != 0 && drowingY != 0)//линия идущяя за мышкой в момент создания полигона
+				g2.drawLine((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[locations.get(locations.size()-1).p.npoints - 1]) + X) * Map.scale),
+						(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[locations.get(locations.size()-1).p.npoints - 1]) + Y) * Map.scale), drowingX, drowingY);
+			for (int i = 0; i < locations.get(locations.size()-1).p.npoints; i++) {//вроде отрисовка полигона
+				if (locations.get(locations.size()-1).p.npoints > i + 1)
+				g2.drawLine((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[i]) + X) * Map.scale),
+							(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[i]) + Y) * Map.scale),
+							(int) ((Math.round(locations.get(locations.size()-1).p.xpoints[i + 1]) + X) * Map.scale),
+							(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[i + 1]) + Y) * Map.scale));
 			}
 		}
 
 	}
 
 }
+//locations.get(locations.size()-1).p. .... надо в отдельную функцию запихнуть
