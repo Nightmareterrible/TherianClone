@@ -4,17 +4,17 @@ import java.awt.*;
 
 public class MapLocation {
 
-@Expose
+	@Expose
 	Polygon p;
-@Expose
+	@Expose
 	String TypeLocation;
 }
  class MapLocationToSave {
 
-@Expose
+	@Expose
 	int x[];
-@Expose
+	@Expose
 	int y[];
-@Expose
+	@Expose
 	String TypeLocation;
 }
