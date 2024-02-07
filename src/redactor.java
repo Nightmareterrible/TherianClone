@@ -53,7 +53,7 @@ import com.google.gson.stream.JsonWriter;
 public class redactor implements MouseMotionListener, MouseListener {
 
 
-	MapLocation MapLoc;
+	MapLocation MapLoc;//класс с хранение всех данных о локации
 	boolean leftMauseButonIsPresd;
 	ArrayList<MapLocation> locations = new ArrayList<>();//все локации
 
@@ -68,7 +68,6 @@ public class redactor implements MouseMotionListener, MouseListener {
 	ButtonGroup bg = new ButtonGroup();
 
 	public static void main(String[] args) {
-		HashMap<String,String> mapp =  new HashMap<>();
 
 		GLOBALS.mode = "editor";
 		new okno();
@@ -79,27 +78,12 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 	public redactor() {
 
-		String json = null;
-		Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
 
-		File f = new File("location.txt");
 
-		if (f.exists())
-			try {
-				FileInputStream ff = new FileInputStream(f);
-				InputStreamReader r = new InputStreamReader(ff);
-				BufferedReader b = new BufferedReader(r);
-				Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-				json = b.readLine();
-				readJson(json);
-				b.close();
-				r.close();
-				ff.close();
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "read:\n" + e.toString());
-				e.printStackTrace();
-			}
+
+		readJson();// вызываем функцию по прочтению и записи локацый
+
 
 		JButton btnNewButton_1 = new JButton("сохранить");
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -120,7 +104,12 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (deletPoligon == true) {
+					deletPoligon = false;
+					return;
+				}
 				deletPoligon = true;
+
 
 			}
 
@@ -128,7 +117,6 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 		for (int i = 0; i < nameLocation.length; i++) {
 			radBtn[i] = new JRadioButton();
-
 			radBtn[i].setText(nameLocation[i]);
 			radBtn[i].setBounds(240, i * 30, 100, 30);
 			bg.add(radBtn[i]);
@@ -143,58 +131,66 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 	}
 
-	private void readJson(String json) {
-	/*	if (json==null) {
+	private void readJson() {
+		String json=null;
+		Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		ArrayList<MapLocationToSave> tempLocations = new ArrayList<MapLocationToSave>();//временное хранилище перобразованых локаций для чтения из json
+		File f = new File("location.txt");//читаем файл и записываем его в переменную json
+		if (f.exists())
+			try {
+				FileInputStream ff = new FileInputStream(f);
+				InputStreamReader r = new InputStreamReader(ff);
+				BufferedReader b = new BufferedReader(r);
+				json = b.readLine();
+				b.close();
+				r.close();
+				ff.close();
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "read:\n" + e.toString());
+				e.printStackTrace();
+			}
+		if (json==null) {//если ничего то не идем дальше
 			return;
 		}
-		Gson g = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		tempLocations= gBilder.fromJson(json,new TypeToken<ArrayList<MapLocationToSave>>(){}.getType());//чтение Json с указанеим типа
 
-		String[] jsons = json.split("<br>");
-
-		for (int i = 0; i < jsons.length; i++) {
-
-			Type listType = new TypeToken<ArrayList<POLIGON>>() {
-			}.getType();
-			ArrayList<POLIGON> arreyPoligonClas = new Gson().fromJson(jsons[i], listType);
-			p = new Polygon();
-			for (int j = 0; j < arreyPoligonClas.size(); j++) {
-				p.addPoint(arreyPoligonClas.get(j).x, arreyPoligonClas.get(j).y);
-			}
-			location.put(p, arreyPoligonClas.get(i).TypeLocation);
-
-			keys.add(p);
+		for (int i=0; i < tempLocations.size();i++){//тут записваем все прочитаное в основной класс с помщю которого все рабоет
+				newLocation();
+				for (int j = 0; j < tempLocations.get(i).x.length; j++) {
+					MapLoc.p.addPoint(tempLocations.get(i).x[j],tempLocations.get(i).y[j]);
+				}
+				MapLoc.TypeLocation=tempLocations.get(i).TypeLocation;
+				locations.add(MapLoc);
 		}
-		p = null;
-	*/}
+		newLocation();
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	protected void writeJson() {
+		Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();//ghjrfxtyfz dthcbz
+		MapLocationToSave locToSave;
+		ArrayList<MapLocationToSave> tempLocations = new ArrayList<MapLocationToSave>();//временное хранилище перобразованых локаций для хранения в json
+		String json;//текст файла json
+		if(locations.size()>0)
+		for (int i = 0; i < locations.size(); i++) {//переносим все точки полигона в масивы в специальный класс т.к. Gson(библиотека) не умеет хранить Poligon
+													//при добавлении новой перемнной в класс MapLocation нужно добавить в класс помошник и добавть ниже присвение перемнной из основного в помошник
+			locToSave = new MapLocationToSave();
 
-		/*String json = null;
-		Gson g = new Gson();
-
-		for (int j = 0; j < keys.size(); j++) {
-			ArrayList<POLIGON> arreyPoligomClas = new ArrayList<POLIGON>();
-
-			for (int i = 0; i < keys.get(j).npoints; i++) {
-
-				POLIGON pol = new POLIGON();
-				pol.x = keys.get(j).xpoints[i];
-				pol.y = keys.get(j).ypoints[i];
-				pol.TypeLocation = location.get(keys.get(j));
-				arreyPoligomClas.add(pol);
+			/*locToSave.x = locations.get(i).p.xpoints.clone();//я не заню почему не работает это
+			locToSave.y = locations.get(i).p.ypoints.clone();*///поэтому пришлось писать это:
+			locToSave.x= new int[locations.get(i).p.npoints];
+			locToSave.y= new int[locations.get(i).p.npoints];
+			for (int j = 0; j < locations.get(i).p.npoints; j++) {
+				locToSave.x[j] = locations.get(i).p.xpoints[j];
+				locToSave.y[j] = locations.get(i).p.ypoints[j];
 			}
-			if (json == null) {
-				json = g.toJson(arreyPoligomClas) + "<br>";
-			} else {
-				json = json + g.toJson(arreyPoligomClas) + "<br>";
-			}
+			locToSave.TypeLocation=locations.get(i).TypeLocation;
+			tempLocations.add(locToSave);
 		}
+		json = gBilder.toJson(tempLocations);
 
-		File f = new File("location.txt");
-		if (json==null) {
-			return;
-		}
+
+		File f = new File("location.txt");//создание и сохранение файла
 		try {
 			f.createNewFile();
 			FileOutputStream ff = new FileOutputStream(f);
@@ -208,7 +204,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "write:\n" + e.toString());
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 	@Override
@@ -242,42 +238,42 @@ public class redactor implements MouseMotionListener, MouseListener {
 		drowingX = e.getX();
 		drowingY = e.getY();
 
-		if (e.getButton() == 1 &&deletPoligon == false&&locations.size()!=0) {
+		if (e.getButton() == 1 &&deletPoligon == false) {
+			if(MapLoc==null) {
+				newLocation();
+			}
 
-			if (locations.get(locations.size()-1).p.xpoints[0] >= (int) (((e.getX()) / Map.scale) - X)-10 &&
-					locations.get(locations.size()-1).p .xpoints[0]<= (int) (((e.getX()) / Map.scale) - X)+10 &&
-					locations.get(locations.size()-1).p .ypoints[0] >= (int) (((e.getY()) / Map.scale) - Y)-10 &&
-					locations.get(locations.size()-1).p .ypoints[0] <= (int) (((e.getY()) / Map.scale) - Y)+10 &&
-					locations.get(locations.size()-1).p .npoints>=3)
+			if (MapLoc.p .npoints>=3&&
+					MapLoc.p.xpoints[0] >= (int) (((e.getX()) / Map.scale) - X)-10 &&
+					MapLoc.p.xpoints[0]<= (int) (((e.getX()) / Map.scale) - X)+10 &&
+					MapLoc.p .ypoints[0] >= (int) (((e.getY()) / Map.scale) - Y)-10 &&
+					MapLoc.p .ypoints[0] <= (int) (((e.getY()) / Map.scale) - Y)+10
+					)//завершение полигона то есть проверка на нажатие на последнию точку
 
 			{
 				locations.add(MapLoc);
-				MapLoc = new MapLocation();
+				newLocation();
 				return;
 			}
 
-			if(MapLoc==null) {
-				MapLoc = new MapLocation();
-
-			}
 
 			MapLoc.p.addPoint((int) (((e.getX()) / Map.scale) - X), (int) ((e.getY()) / Map.scale - Y));//добавление точки полигона
 
 
-		}else if (e.getButton() == 3 && deletPoligon == false && locations.get(locations.size()-1).p !=null){
+		}else if (e.getButton() == 3 && deletPoligon == false && MapLoc !=null&&MapLoc.p.npoints>0){//уделение поледнего ребра полигона
 			Polygon tempPoligon;
-			tempPoligon = locations.get(locations.size()-1).p;
-			locations.get(locations.size()-1).p = new Polygon();
+			tempPoligon = MapLoc.p;
+			MapLoc.p = new Polygon();
 
 			for (int i = 0; i < tempPoligon.npoints-1; i++) {
-				locations.get(locations.size()-1).p.addPoint(tempPoligon.xpoints[i],tempPoligon.ypoints[i]);
+				MapLoc.p.addPoint(tempPoligon.xpoints[i],tempPoligon.ypoints[i]);
 
 			}
 		}
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {// long left button and pres right button
+	public void mouseReleased(MouseEvent e) {
 		drowingX = e.getX();
 		drowingY = e.getY();
 
@@ -285,17 +281,23 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 	public void shiftXY(Point2D shift) {
 		X += (int) shift.getX();
-		Y += (int) shift.getY(); // rh
+		Y += (int) shift.getY();
+	}
+	public void newLocation() {//создание новой локации
+		MapLoc = new MapLocation();
+		MapLoc.p =new Polygon();
 	}
 
 	public void draw(Graphics g) {
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(2.5f));
+
 		for (int i = 0; i < locations.size(); i++) {
 
 			for (int j = 0; j < locations.get(i).p.npoints; j++) {
-				/*for (int a = 0; a < radBtn.length; a++) {
+
+				/*for (int a = 0; a < radBtn.length; a++) {//цвета нарисованых полигонов подумать как перделать этот код плох т.к. используються буквы в условиях
 					if (radBtn[a].isSelected()) {
 						switch (location.get(keys.get(i))) {
 						case ("forest"):
@@ -311,7 +313,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 						}
 					}
 				}*/
-				if (locations.get(i).p.npoints > j + 1) {//отврисовка полигона во время редактирования и создания
+				if (locations.get(i).p.npoints > j + 1) {//отврисовка полигона если он не редактируеться
 					g2.drawLine((int) ((Math.round(locations.get(i).p.xpoints[j]) + X) * Map.scale),
 							(int) ((Math.round(locations.get(i).p.ypoints[j]) + Y) * Map.scale),
 							(int) ((Math.round(locations.get(i).p.xpoints[j + 1]) + X) * Map.scale),
@@ -326,8 +328,9 @@ public class redactor implements MouseMotionListener, MouseListener {
 			}
 
 		}
-		if (MapLoc != null && locations.get(locations.size()-1).p.npoints >= 1) {
-			for (int a = 0; a < radBtn.length; a++) {
+
+		if (MapLoc!=null &&MapLoc.p.npoints >= 1) {
+			/*for (int a = 0; a < radBtn.length; a++) {//цвета нарисованых полигонов подумать как перделать, этот код плох т.к. используються буквы в условиях
 				if (radBtn[a].isSelected()) {
 					switch (radBtn[a].getText()) {
 						case ("forest"):
@@ -342,21 +345,25 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 					}
 				}
-			}
+			}*/
 
-			g2.drawOval((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[0]) + X) * Map.scale - 5),
-					(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[0]) + Y) * Map.scale - 5), 10, 10);//большая точка в начело полигона на менте создания пполигона
-			g2.drawOval((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[0]) + X) * Map.scale - 1),
-					(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[0]) + Y) * Map.scale - 1), 1, 1);//маленькая точка в начело полигона на менте создания пполигона
+			g2.drawOval((int) ((Math.round(MapLoc.p.xpoints[0]) + X) * Map.scale - 5),
+					(int) ((Math.round(MapLoc.p.ypoints[0]) + Y) * Map.scale - 5), 10, 10);//большая точка в начело полигона на менте создания пполигона
+			g2.drawOval((int) ((Math.round(MapLoc.p.xpoints[0]) + X) * Map.scale - 1),
+					(int) ((Math.round(MapLoc.p.ypoints[0]) + Y) * Map.scale - 1), 1, 1);//маленькая точка в начело полигона на менте создания пполигона
 			if (drowingX != 0 && drowingY != 0)//линия идущяя за мышкой в момент создания полигона
-				g2.drawLine((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[locations.get(locations.size()-1).p.npoints - 1]) + X) * Map.scale),
-						(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[locations.get(locations.size()-1).p.npoints - 1]) + Y) * Map.scale), drowingX, drowingY);
-			for (int i = 0; i < locations.get(locations.size()-1).p.npoints; i++) {//вроде отрисовка полигона
-				if (locations.get(locations.size()-1).p.npoints > i + 1)
-				g2.drawLine((int) ((Math.round(locations.get(locations.size()-1).p.xpoints[i]) + X) * Map.scale),
-							(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[i]) + Y) * Map.scale),
-							(int) ((Math.round(locations.get(locations.size()-1).p.xpoints[i + 1]) + X) * Map.scale),
-							(int) ((Math.round(locations.get(locations.size()-1).p.ypoints[i + 1]) + Y) * Map.scale));
+				g2.drawLine((int) ((Math.round(MapLoc.p.xpoints[MapLoc.p.npoints - 1]) + X) * Map.scale),
+						(int) ((Math.round(MapLoc.p.ypoints[MapLoc.p.npoints - 1]) + Y) * Map.scale), drowingX, drowingY);
+
+			for (int i = 0; i < MapLoc.p.npoints; i++) {// отрисовка на момент создания и редактирования полигона
+
+				if (MapLoc.p.npoints > i + 1){
+
+					g2.drawLine((int) ((Math.round(MapLoc.p.xpoints[i]) + X) * Map.scale),
+							(int) ((Math.round(MapLoc.p.ypoints[i]) + Y) * Map.scale),
+							(int) ((Math.round(MapLoc.p.xpoints[i + 1]) + X) * Map.scale),
+							(int) ((Math.round(MapLoc.p.ypoints[i + 1]) + Y) * Map.scale));
+				}
 			}
 		}
 

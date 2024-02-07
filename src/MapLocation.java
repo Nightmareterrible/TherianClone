@@ -1,8 +1,20 @@
+import com.google.gson.annotations.Expose;
+
 import java.awt.*;
 
 public class MapLocation {
 
+@Expose
+	Polygon p;
+@Expose
+	String TypeLocation;
+}
+ class MapLocationToSave {
 
-	Polygon p = new Polygon();
-	//String TypeLocation;
+@Expose
+	int x[];
+@Expose
+	int y[];
+@Expose
+	String TypeLocation;
 }
