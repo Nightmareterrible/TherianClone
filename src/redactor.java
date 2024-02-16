@@ -261,6 +261,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 			for (int i = 0; i < tempPoligon.npoints-1; i++) {
 				MapLoc.p.addPoint(tempPoligon.xpoints[i],tempPoligon.ypoints[i]);
 
+
 			}
 		}
 	}
