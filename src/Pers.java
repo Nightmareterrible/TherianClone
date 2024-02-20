@@ -28,6 +28,13 @@ class Pers {
 	static int CircleX = -100;
 	static int CircleY = -100;
 	private static Image img;
+	public Pers(){
+		try {
+			Pers.loadImage(this.getClass().getResource("img/pers.png"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
 
 	static int r(double x)
 	{
@@ -215,6 +222,7 @@ class Pers {
 	}
 
 	public static void init(panel p, float x2, float y2) {
+		Pers pers = new Pers();
 		panel = p;
 		X = x2;
 		Y = y2;

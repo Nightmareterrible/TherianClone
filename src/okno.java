@@ -13,8 +13,8 @@ public class okno extends JFrame {
 		p = new panel();
 		setContentPane(p);
 		//setResizable(false);
-		setVisible(true); // !!! setVisible надо в самом конце, иначе картинка
-						  // при старте может не прорисоваться
+		setVisible(true); // !!! setVisible пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+						  // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		
 		menu = new Menu();
 		menu.setLocation(0 ,520);
@@ -22,7 +22,7 @@ public class okno extends JFrame {
 		
 		
 		
-		int KadrVSek = 50;// считать кадры секунды = 1000 / KadrVSek
+		int KadrVSek = (int)(1000/60);// fps
 				
 		Timer repaintTimer = new Timer(KadrVSek, new ActionListener() {
 			

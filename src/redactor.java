@@ -77,7 +77,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 	}
 
 	public redactor() {
-		readJson();// вызываем функцию по прочтению и записи локацый
+		readJson();// вызываем функцию по прочтению
 		JButton btnNewButton_1 = new JButton("сохранить");
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnNewButton_1.setBounds(0, 0, 120, 70);

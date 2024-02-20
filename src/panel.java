@@ -36,26 +36,23 @@ class panel extends JPanel {
 		map = new Map(this);
 		Pers.init(this, X, Y);
 
+
 		createskroolov();
 
 		/*
-		System.out.println("начали загрузку");
+		System.out.println("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 		try {
-			// Загрузить ресурсы в статическом методе - не получится. Поэтому -
-			// грузим отдельным методом
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ -
+			// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			map.loadImage(this.getClass().getResource("img/map1.jpg"));
 			// map.loadImage(this.getClass().getResource("img/map2.jpg"));
 			// map.loadImage(this.getClass().getResource("img/86a463b2e2583ca508e968c13b91d3c0.jpg"));
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		System.out.println("завершили загрузку");
+		System.out.println("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 		*/
-		try {
-			Pers.loadImage(this.getClass().getResource("img/pers.png"));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+
 	}
 
 	// -------------------------------------------------------
@@ -64,12 +61,6 @@ class panel extends JPanel {
 		super.paintComponent(g);
 
 		map.draw(g);
-		if (map.villageList != null) {
-			for (int i = 0; i < map.villageList.size(); i++) {
-				map.villageList.get(i).draw(g);
-			}
-
-		}
 		Pers.draw(g);
 		if(redactor.r!=null)
 		redactor.r.draw(g);

@@ -57,6 +57,8 @@ class Map {
 		File dir = new File(path+ "/src/img/maps/"); //path ��������� �� ����������
 		File[] arrFiles = dir.listFiles();
 		List<File> lst = Arrays.asList(arrFiles);
+		arrFiles = null;
+
 		
 		for (int i = 0; i < lst.size(); i++) {
 			String n = lst.get(i).getName();
@@ -66,19 +68,23 @@ class Map {
 				String nn[] = n.split(",");
 				int x = Integer.parseInt(nn[0]);
 				int y = Integer.parseInt(nn[1]);
-				max_x = Math.max(max_x, x);
-				max_y = Math.max(max_y, y);
+				/*max_x = Math.max(max_x, x);
+				max_y = Math.max(max_y, y);*/
+				max_x = 10;
+				max_y = 10;
 				//System.out.println(n);
 			}
 		}
+		lst = null;
 		System.out.println(max_x);
 		System.out.println(max_y);
 		Image z = loadImage("map" + max_x + "," + max_y + ".png");
+
 		// max_x � max_y �� ���� ������ -1, ������ ��� ��������� �� ���������� � ����
 		mapW = (max_x ) * pieceW + z.getWidth(null);
 		mapH = (max_y ) * pieceH + z.getHeight(null);
 		System.out.println("������ �����: "+mapW+", "+mapH);
-		
+		z=null;
 		int countX = mapW / pieceW;
 		if (mapW % pieceW != 0)
 			countX++;
@@ -102,28 +108,6 @@ class Map {
 			JOptionPane.showMessageDialog(null,
 					"������ �������� ����������� ��������");
 		}
-
-		for (int i = 0; i < 6; i++) {
-			v = new village();
-			v.X = 100 * i;
-			v.Y = 100 * i;
-			villageList.add(v);
-		}
-
-		// ��� ������ �������� �������� ����
-		// TODO: 1) ������ ������� ������ ���� ��������� (��������, 60�60 px)
-		// TODO: 2) ����� ������ �� ������� (������� ������ � ��� ������, ����
-		// �������� ��� �������� ���� ��������� � ������)
-		/*
-		 * for (int i = 0; i < map.villageList.size()-1; i++) {
-		 * villageList.get(i). loadImageVilageImg(this.getClass().getResource(
-		 * "img/cite.jpeg")); villageList.get(i).
-		 * loadImagePictureVilageImg(this.getClass().getResource(
-		 * "img/cite.jpeg")); }
-		 */
-
-		System.out.println("��������� �������� �����");
-
 	}
 
 	public double getX() {
@@ -180,6 +164,7 @@ class Map {
 					Image temp = loadImage("map" + x + "," + y + ".png");
 					if (temp != null)
 						imgs[x][y] = temp;
+					System.out.println("выполненно");
 				}
 				// System.out.println("imgx["+x+"] = "+imgsx[x] +
 				// ", imgy["+y+"] = "+imgsx[y]);
@@ -287,96 +272,8 @@ class Map {
 			start(); // ��������� �����
 		}
 
-		public void run() {
-			// ���� ��������� �� ����� �������� ����������� - ����� ������
-			// ���������� � ���� ArrayList ��������� ���������
-			loadingImages.add(res.getPath());
 
-			// http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/DeterminingtheFormatofanImageinaFile.htm
-			// http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/AddImageIOReadProgressListenertoImageReader.htm
-			// https://stackoverflow.com/questions/18636708/how-to-give-image-url-to-a-createimageinputstream-method
-			// https://developer.alexanderklimov.ru/android/java/thread.php
 
-			Iterator readers = ImageIO.getImageReadersBySuffix("JPEG");
-			// Iterator readers = ImageIO.getImageReadersBySuffix("PNG");
-			ImageReader imageReader = (ImageReader) readers.next();
-			InputStream urlInputHere;
-			try {
-				urlInputHere = res.openStream();
-				ImageInputStream in;
-				in = ImageIO.createImageInputStream(urlInputHere);
-				imageReader.setInput(in, false);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			imageReader
-					.addIIOReadProgressListener(new IIOReadProgressListener() {
-						public void imageComplete(ImageReader source) {
-							System.out.println("image complete " + source);
-							panel.repaint();
-						}
-
-						public void imageProgress(ImageReader source,
-								float percentageDone) {
-							System.out.println("image progress " + source
-									+ ": " + percentageDone + "%");
-							if (myThread != null) {
-								percent = percentageDone;
-								panel.repaint();
-							}
-						}
-
-						public void imageStarted(ImageReader source,
-								int imageIndex) {
-							System.out.println("image #" + imageIndex
-									+ " started " + source);
-						}
-
-						public void readAborted(ImageReader source) {
-							System.out.println("read aborted:" + source);
-						}
-
-						public void sequenceComplete(ImageReader source) {
-							System.out.println("sequence complete " + source);
-						}
-
-						public void sequenceStarted(ImageReader source,
-								int minIndex) {
-							System.out.println("sequence started " + source
-									+ ": " + minIndex);
-						}
-
-						public void thumbnailComplete(ImageReader source) {
-							System.out.println("thumbnail complete " + source);
-						}
-
-						public void thumbnailProgress(ImageReader source,
-								float percentageDone) {
-							System.out.println("thumbnail started " + source
-									+ ": " + percentageDone + "%");
-						}
-
-						public void thumbnailStarted(ImageReader source,
-								int imageIndex, int thumbnailIndex) {
-							System.out.println("thumbnail progress " + source
-									+ ", " + thumbnailIndex + " of "
-									+ imageIndex);
-						}
-					});
-
-			/*
-			 * try { img = imageReader.read(0); imgW = img.getWidth(null); imgH
-			 * = img.getHeight(null); } catch (IOException e) {
-			 * e.printStackTrace(); }
-			 */
-			loadingImages.remove(res.getPath()); // ����� ������ ��������� �����
-		}//зачем нужен этот поток ?
-
-	}
-
-	public void loadImage(URL resource) throws Exception {
-		// img = ImageIO.read(resource);
-		myThread = new MyThread(resource);
 	}
 
 	public Point2D move(int mouseX, int mouseY) throws Exception {
