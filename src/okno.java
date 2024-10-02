@@ -12,19 +12,20 @@ public class okno extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		p = new panel();
 		setContentPane(p);
-		//setResizable(false);
-		setVisible(true); // !!! setVisible ���� � ����� �����, ����� ��������
-						  // ��� ������ ����� �� �������������
-		
+		setVisible(true);
+		p.addMouseListener(p.shifting);
+		p.addMouseMotionListener(p.shifting);
+		p.addMouseWheelListener(p.shifting);
+
+
 		menu = new Menu();
 		menu.setLocation(0 ,520);
 		p.add(menu);
 		
 		
 		
-		int KadrVSek = (int)(1000/60);// fps
-				
-		Timer repaintTimer = new Timer(KadrVSek, new ActionListener() {
+		int fps = (int)(1000/60);// fps
+		Timer repaintTimer = new Timer(fps, new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {

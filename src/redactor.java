@@ -230,8 +230,10 @@ public class redactor implements MouseMotionListener, MouseListener {
 	public void mousePressed(MouseEvent e) {
 		drowingX = e.getX();
 		drowingY = e.getY();
+		/* test rebild
 
 		if (e.getButton() == 1 &&deletPoligon == false) {
+
 			if(MapLoc==null) {
 				newLocation();
 			}
@@ -262,7 +264,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 				MapLoc.p.addPoint(tempPoligon.xpoints[i],tempPoligon.ypoints[i]);
 
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -306,6 +308,9 @@ public class redactor implements MouseMotionListener, MouseListener {
 						}
 					}
 				}*/
+
+
+				/* test rebild
 				if (locations.get(i).p.npoints > j + 1) {//отврисовка полигона если он не редактируеться
 					g2.drawLine((int) ((Math.round(locations.get(i).p.xpoints[j]) + X) * Map.scale),
 							(int) ((Math.round(locations.get(i).p.ypoints[j]) + Y) * Map.scale),
@@ -317,7 +322,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 							(int) ((Math.round(locations.get(i).p.xpoints[0]) + X) * Map.scale),
 							(int) ((Math.round(locations.get(i).p.ypoints[0]) + Y) * Map.scale));
 
-				}
+				}*/
 			}
 
 		}
@@ -339,7 +344,7 @@ public class redactor implements MouseMotionListener, MouseListener {
 					}
 				}
 			}*/
-
+/* test rebild
 			g2.drawOval((int) ((Math.round(MapLoc.p.xpoints[0]) + X) * Map.scale - 5),
 					(int) ((Math.round(MapLoc.p.ypoints[0]) + Y) * Map.scale - 5), 10, 10);//большая точка в начело полигона на менте создания пполигона
 			g2.drawOval((int) ((Math.round(MapLoc.p.xpoints[0]) + X) * Map.scale - 1),
@@ -347,16 +352,17 @@ public class redactor implements MouseMotionListener, MouseListener {
 			if (drowingX != 0 && drowingY != 0)//линия идущяя за мышкой в момент создания полигона
 				g2.drawLine((int) ((Math.round(MapLoc.p.xpoints[MapLoc.p.npoints - 1]) + X) * Map.scale),
 						(int) ((Math.round(MapLoc.p.ypoints[MapLoc.p.npoints - 1]) + Y) * Map.scale), drowingX, drowingY);
-
+*/
 			for (int i = 0; i < MapLoc.p.npoints; i++) {// отрисовка на момент создания и редактирования полигона
 
 				if (MapLoc.p.npoints > i + 1){
-
+					/* test rebild
 					g2.drawLine((int) ((Math.round(MapLoc.p.xpoints[i]) + X) * Map.scale),
 							(int) ((Math.round(MapLoc.p.ypoints[i]) + Y) * Map.scale),
 							(int) ((Math.round(MapLoc.p.xpoints[i + 1]) + X) * Map.scale),
 							(int) ((Math.round(MapLoc.p.ypoints[i + 1]) + Y) * Map.scale));
-				}
+					*/
+ 				}
 			}
 		}
 

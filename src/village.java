@@ -36,7 +36,7 @@ public class village {
 	public village() {
 
 	}
-
+/* test rebild
 	static int r(double x) {
 		return (int) (x * Map.scale);
 	}
@@ -44,6 +44,8 @@ public class village {
 	static int r_(double x) {
 		return (int) (x / Map.scale);
 	}
+
+ */
 
 	static double dist(double x1, double y1, double x2, double y2) {
 		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
@@ -54,7 +56,7 @@ public class village {
 		int roundedShiftedX = Math.round(X) - persR;
 		int roundedShiftedY = Math.round(Y) - persR;
 		
-
+/* test rebild
 		if (citeIsOpen == true) {// рисоваться должно на MapPanel
 			if (vilageHeight != 0 && vilageWidth != 0)
 				g.drawImage(vilageImg, r(roundedShiftedX), r(roundedShiftedY),
@@ -64,6 +66,8 @@ public class village {
 				g.drawImage(pictureVilageImg, r(roundedShiftedX),r(roundedShiftedY),
 						vilagePictureWidth,vilagePictureHeight, null);
 		}
+
+ */
 	}
 
 	public void shiftXY(Point2D shift) {

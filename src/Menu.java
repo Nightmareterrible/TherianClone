@@ -1,13 +1,10 @@
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 
@@ -25,7 +22,7 @@ class Menu extends JPanel
 		add(btnNewButton_1);
 		
 		JLabel lblNewLabel_1 = new JLabel("New label");
-		lblNewLabel_1.setIcon(new ImageIcon(Menu.class.getResource("/img/pers.png")));
+		lblNewLabel_1.setIcon(new ImageIcon(Menu.class.getResource("/img/Character.png")));
 		lblNewLabel_1.setBounds(423, 11, 118, 122);
 		add(lblNewLabel_1);
 		

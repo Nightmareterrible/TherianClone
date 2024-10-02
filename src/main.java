@@ -11,6 +11,7 @@ public class main {
 	public static void main(String[] args) {
 		GLOBALS.mode = "player";
 		new okno();
+
 	}
 }
 

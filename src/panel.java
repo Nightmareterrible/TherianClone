@@ -11,47 +11,22 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 class panel extends JPanel {
-
-	public Button btn;
 	Map map;
-	double koeff = 1.0;
+	public GlobalLoadImg globalLoadImg;
 	SizeAndScrol sizeAndScrol;
+	Shifting shifting;
 
-	public void createskroolov() {
-		sizeAndScrol = new SizeAndScrol();
-		addMouseMotionListener(sizeAndScrol.mouseMotionAd);
-		addMouseListener(sizeAndScrol.mouseAd);
-		addMouseWheelListener(sizeAndScrol.mouseWhil);
-
-	}
-
-	// -------------------------------------------------------
 
 	// -------------------------------------------------------
 	public panel() {
-
+		globalLoadImg = new GlobalLoadImg();
 		setLayout(null);
+		shifting = new Shifting();
+
+		map = new Map(this);
 		float X = (int) (Math.random() * 500);
 		float Y = (int) (Math.random() * 500);
-		map = new Map(this);
 		Pers.init(this, X, Y);
-
-
-		createskroolov();
-
-		/*
-		System.out.println("������ ��������");
-		try {
-			// ��������� ������� � ����������� ������ - �� ���������. ������� -
-			// ������ ��������� �������
-			map.loadImage(this.getClass().getResource("img/map1.jpg"));
-			// map.loadImage(this.getClass().getResource("img/map2.jpg"));
-			// map.loadImage(this.getClass().getResource("img/86a463b2e2583ca508e968c13b91d3c0.jpg"));
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		System.out.println("��������� ��������");
-		*/
 
 	}
 
@@ -65,19 +40,10 @@ class panel extends JPanel {
 		if(redactor.r!=null)
 		redactor.r.draw(g);
 		
-		if (sizeAndScrol.paintmovecircle) {
-			int W = (int) GLOBALS.drag_circle_diameter;
-			g.setColor(Color.yellow);
-			g.drawOval(sizeAndScrol.pressedmx - W / 2 - 1,
-					sizeAndScrol.pressedmx - W / 2, W, W);
-			g.setColor(Color.white);
-			g.drawOval(sizeAndScrol.pressedmx - W / 2 + 1,
-					sizeAndScrol.pressedmx - W / 2 + 1, W, W);
-			g.setColor(Color.black);
-			g.drawOval(sizeAndScrol.pressedmx - W / 2, sizeAndScrol.pressedmx
-					- W / 2, W, W);
-		}
+
 		g.setColor(Color.white);
 	}
+
+
 
 }

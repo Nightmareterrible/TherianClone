@@ -1,311 +1,111 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.event.IIOReadProgressListener;
-import javax.imageio.stream.ImageInputStream;
-import javax.swing.JOptionPane;
+import java.awt.*;
+
+import java.awt.geom.Point2D;
+
 
 class Map {
-	static public int mapW = 4096;
-	static public int mapH = 2849;
-	final static public int pieceW = 500;
-	final static public int pieceH = 500;
-	/**
-	 * ������ ����������� �����. ������ ����������� - �:<br>
-	 * imgs[x][y]
-	 */
-	Image[][] imgs;
-	/** �����������-��������. ������������ ����� ��������� ����� */
-	Image nullimg;
-	int[] imgsx;
-	int[] imgsy;
+    private panel panel;
+    final int MAP_TILE_WGHT = 500;
 
-	ArrayList<String> loadingImages = new ArrayList<String>();
+    final int MAP_TILE_HIGHT = 500;
+    int amountTileX = 30;
+    int amountTileY = 20;
 
-	village v;
-	private double mapX;
-	private double mapY;
-	private panel panel;
-	private MyThread myThread;
-	int imgW;
-	int imgH;
-	protected static double scale = 1;
-	ArrayList<village> villageList = new ArrayList<village>();
-
-	public Map(panel p) {
-		System.out.println("�������� �������� �����");
-		panel = p;
-		int max_x=0, max_y=0;
-		// �������� ������� ����� �� ���������� �����������
-		// ��������� ����� �� ����� "�����������" ��������� ����� ����� �������� (�������������� � ������� �����������)
-		String path = new File("").getAbsolutePath();
-		File dir = new File(path+ "/src/img/maps/"); //path ��������� �� ����������
-		File[] arrFiles = dir.listFiles();
-		List<File> lst = Arrays.asList(arrFiles);
-		arrFiles = null;
-
-		
-		for (int i = 0; i < lst.size(); i++) {
-			String n = lst.get(i).getName();
-			if (n.indexOf(",") > 0) 
-			{
-				n = n.substring(3).replaceAll(".png", "");
-				String nn[] = n.split(",");
-				int x = Integer.parseInt(nn[0]);
-				int y = Integer.parseInt(nn[1]);
-				/*max_x = Math.max(max_x, x);
-				max_y = Math.max(max_y, y);*/
-				max_x = 10;
-				max_y = 10;
-				//System.out.println(n);
-			}
-		}
-		lst = null;
-		System.out.println(max_x);
-		System.out.println(max_y);
-		Image z = loadImage("map" + max_x + "," + max_y + ".png");
-
-		// max_x � max_y �� ���� ������ -1, ������ ��� ��������� �� ���������� � ����
-		mapW = (max_x ) * pieceW + z.getWidth(null);
-		mapH = (max_y ) * pieceH + z.getHeight(null);
-		System.out.println("������ �����: "+mapW+", "+mapH);
-		z=null;
-		int countX = mapW / pieceW;
-		if (mapW % pieceW != 0)
-			countX++;
-		int countY = mapH / pieceH;
-		if (mapH % pieceH != 0)
-			countY++;
-		imgs = new Image[countX][countY];
-		imgsx = new int[countX];
-		imgsy = new int[countY];
-
-		try {
-			nullimg = ImageIO.read(this.getClass().getResource(
-					"img/nullimg.png"));
-			for (int x = 0; x < imgs.length; x++) {
-				for (int y = 0; y < imgs[x].length; y++) {
-					imgs[x][y] = nullimg;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null,
-					"������ �������� ����������� ��������");
-		}
-	}
-
-	public double getX() {
-		return mapX;
-	}
-
-	public double getY() {
-		return mapY;
-	}
-
-	/**
-	 * <b>scaleMultiply</b><br>
-	 * �������� �� �������<br>
-	 * <br>
-	 * 
-	 * @return ����������: double
-	 */
-	private double scaleM(double x) {
-		return x * scale;
-	}
-
-	/**
-	 * <b>scaleDivide</b><br>
-	 * ��������� �� �������<br>
-	 * <br>
-	 * 
-	 * @return ����������: double
-	 */
-	private double scaleD(double x) {
-		return x / scale;
-	}
-
-	/**
-	 * ������������� �����
-	 * 
-	 //* @see Map#loadImage(String, Image)
-	 */
-	public void draw(Graphics g) {
-		// ��� �������, ����� ������ ����� ������
-		imgsx[0] = (int) (scaleM(-mapX));
-		imgsy[0] = (int) (scaleM(-mapY));
-		int W = (int) scaleM(pieceW);
-		int H = (int) scaleM(pieceH);
-		// System.out.println("W = "+W+", H = " + H+", scale = "+scale);
-		for (int x = 0; x < imgsx.length - 1; x++) {
-			imgsx[x + 1] = imgsx[x] + H;
-		}
-		for (int y = 0; y < imgsy.length - 1; y++) {
-			imgsy[y + 1] = imgsy[y] + H;
-		}
-		for (int x = 0; x < imgs.length; x++) {
-			for (int y = 0; y < imgs[x].length; y++) {
-				if (imgs[x][y] == nullimg && isImageVisible(x, y)) {
-					Image temp = loadImage("map" + x + "," + y + ".png");
-					if (temp != null)
-						imgs[x][y] = temp;
-					System.out.println("выполненно");
-				}
-				// System.out.println("imgx["+x+"] = "+imgsx[x] +
-				// ", imgy["+y+"] = "+imgsx[y]);
-				int X = (int) (imgsx[x]);
-				int Y = (int) (imgsy[y]);
-				g.drawImage(imgs[x][y], X, Y, W, H, null);
-			}
-		}
-
-		/*
-		 * // "��������" g.drawRect((panel.getWidth() - 300) / 2, 30, 300, 30);
-		 * g.setColor(Color.green); if (myThread != null) {
-		 * g.fillRect((panel.getWidth() - 300) / 2, 32, (int) (300 *
-		 * myThread.percent / 100), 28); // Font currentFont = g.getFont(); //
-		 * Font newFont = currentFont.deriveFont(currentFont.getSize() * //
-		 * 1.4F); Font newFont = new Font("Courier New", Font.BOLD, 17);
-		 * g.setFont(newFont); g.setColor(Color.black);
-		 * g.drawString("�������� �����������", (panel.getWidth() - 300) / 2 +
-		 * 30, 55); }
-		 */
-	}
-
-	/**
-	 * ����������, ������ �� ����������� � �������� x � y
-	 * 
-	 * @param x_img
-	 *            - ���������� ����� ����������� �� X ( �� ��� ����������)
-	 * @param y_img
-	 *            - ���������� ����� ����������� �� Y ( �� ��� ����������)
-	 * @return ������, ���� ����������� � ��������� �������� ������ �� ������
-	 */
-	private boolean isImageVisible(int x_img, int y_img) {
-
-		double XX = scaleM( x_img * pieceW - mapX);
-		double YY = scaleM( y_img * pieceH - mapY);
-		if ((XX >= 0 && XX <= panel.getWidth() + pieceW)
-				|| (XX + pieceW >= 0 && XX + pieceW <= panel.getWidth()
-						+ pieceW)) {
-			if ((YY >= 0 && YY <= panel.getHeight() + pieceH)
-					|| (YY + pieceH >= 0 && YY + pieceH <= panel.getHeight()
-							+ pieceH))
-				return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * ��������� ����������� �� �������� � ���������� ��� � ����������
-	 * ���������� Image. ����������� ����� �������� � ����� img/ <br>
-	 * ��� ����� ������ ���� mapX,Y.png<br>
-	 * �������� ��� X = 2, Y = 1 ���� ������ ����� ��� map2,1.png
-	 * 
-	 * @param filename
-	 *            - ��� ����� ����������� ��� ��������
-	 * @return ���������� ����������� ����������� Image
-	 * @see Map#draw(Graphics)
-	 */
-	private Image loadImage(String filename) {
-		// �������� ����������� ������ ���� � ������
-		// ������� �� ������ ��������� ����� �����,
-		// ���� ��� ��� ������ ����� ���
-		// �������� ����������� �� ����� �����
-		// System.out.println(outImage);
-
-		if (loadingImages.indexOf(filename) > -1) {
-			return null;
-		}
-		loadingImages.add(filename);
-
-		Image outImage = null;
-		String path = new File("").getAbsolutePath();
-		File f = new File(path + "/src/img/maps/" + filename);
-		if (f.exists()) {
-			try {
-				outImage = ImageIO.read(f);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			// System.out.println("file not exists: " + f.getAbsolutePath());
-		}
-		loadingImages.remove(filename);
-		return outImage;
-	}
-
-	/*
-	 * private static String getFormatName(Object o) { try { ImageInputStream
-	 * iis = ImageIO.createImageInputStream(o); Iterator iter =
-	 * ImageIO.getImageReaders(iis); if (!iter.hasNext()) { return null; }
-	 * ImageReader reader = (ImageReader) iter.next(); iis.close();
-	 * 
-	 * return reader.getFormatName(); } catch (IOException e) { } return null; }
-	 */
-
-	private class MyThread extends Thread {
-		URL res;
-		float percent = 0;
-
-		// �����������
-		MyThread(URL resource) {
-			// ������ ����� �����
-			super("������ �����");
-			res = resource;
-			start(); // ��������� �����
-		}
+    MapTile mapTiles[][] = new MapTile[amountTileX][amountTileY];//массив тайлов условная карта раздела на маленькие части
 
 
+    public Map(panel p) {
+        panel = p;
+        loadFullMapTiles();
 
-	}
+    }
 
-	public Point2D move(int mouseX, int mouseY) throws Exception {
-		if (panel == null) {
-			throw new Exception(
-					"����� �� ����������������� �������. � ��� � ��������?");
-			// return;
-		}
-		double OldX = mapX;
-		double OldY = mapY;
-		mapX -= scaleD(mouseX);
-		mapY -= scaleD(mouseY);
-		if (mapX < 0)
-			mapX = 0;
-		if (mapY < 0)
-			mapY = 0;
-		// panel -�� �� �����������, ����������� ������ ������ ����� � X
-		if (scaleM(mapX) + panel.getWidth() > scaleM(mapW))
-			mapX = (scaleM(mapW) - panel.getWidth());
-		if (scaleM(mapY) + panel.getHeight() > scaleM(mapH))
-			mapY = (scaleM(mapH) - panel.getHeight());
-		double shiftx = OldX - mapX;
-		double shifty = OldY - mapY;
-		return new Point2D.Double(shiftx, shifty);
-	}
+    public void draw(Graphics g) {
+        for (int i = 0; i < amountTileX; i++) {
+            for (int j = 0; j < amountTileY; j++) {
 
-	public void moveToPers() throws Exception {
-		// �����
-		int centerX = panel.getWidth() / 2;
-		int centerY = panel.getHeight() / 2;
-		Point2D shift = move((centerX - (int) Pers.X), (centerY - (int) Pers.Y));
-		Pers.shiftXY(shift);
+                    g.drawImage(mapTiles[i][j].tileImage, (int) Math.ceil((mapTiles[i][j].getX() + okno.p.shifting.getShiftX())*okno.p.shifting.getScale()),
+                                                        (int) Math.ceil((mapTiles[i][j].getY() + okno.p.shifting.getShiftY())*okno.p.shifting.getScale()),
+                                                        (int) Math.ceil(MAP_TILE_WGHT*okno.p.shifting.getScale()),
+                                                        (int) Math.ceil(MAP_TILE_WGHT*okno.p.shifting.getScale()),
+                                                        null);
 
-	}
+
+            }
+        }
+    }
+
+    public void loadFullMapTiles() {
+        for (int i = 0; i < amountTileX; i++) {
+            for (int j = 0; j < amountTileY; j++) {
+                MapTile tile = new MapTile();
+                tile.setNumberX(i);
+                tile.setNumberY(j);
+                tile.setCoordinates(new Point(MAP_TILE_WGHT * i, MAP_TILE_HIGHT * j));
+                try {
+                    tile.tileImage = panel.globalLoadImg.MapTileLoad(i, j);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                mapTiles[i][j] = tile;
+            }
+        }
+    }
+}
+
+
+class MapTile {
+
+    Point2D coordinates;
+    int numberX;
+    int numberY;
+    Image tileImage;
+
+    public MapTile() {
+    }
+
+
+    //geters and seters
+
+    public int getX() {//тоже самое что и getCoordinates() только сокращеное написание
+        return (int) coordinates.getX();
+    }
+
+    public int getY() {//тоже самое что и getCoordinates() только сокращеное написание
+        return (int) coordinates.getY();
+    }
+
+    public Point2D getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Point2D coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public int getNumberX() {
+        return numberX;
+    }
+
+    public void setNumberX(int numberX) {
+        this.numberX = numberX;
+    }
+
+    public int getNumberY() {
+        return numberY;
+    }
+
+    public void setNumberY(int numberY) {
+        this.numberY = numberY;
+    }
+
+    public Image getTileImage() {
+        return tileImage;
+    }
+
+    public void setTileImage(Image tileImage) {
+        this.tileImage = tileImage;
+    }
 }

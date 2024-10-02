@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -30,12 +29,12 @@ class Pers {
 	private static Image img;
 	public Pers(){
 		try {
-			Pers.loadImage(this.getClass().getResource("img/pers.png"));
+			Pers.loadImage(this.getClass().getResource("img/Character.png"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
-
+/* test rebild
 	static int r(double x)
 	{
 		return (int)(x * Map.scale);
@@ -45,13 +44,18 @@ class Pers {
 		return (int)(x / Map.scale);
 	}
 
+ */
+
 	static double dist(double x1, double y1, double x2, double y2) {
 		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 	}
 
 	public static void move(float mx1, float my1) throws Exception {
+		/* test rebild
 		float mx = r_(mx1);
 		float my = r_(my1);
+
+		 */
 		if (panel == null) {
 			throw new Exception(
 					"Pers ?? ???????????????? ???????. ? ??? ??? ?????????");
@@ -59,12 +63,18 @@ class Pers {
 		}
 		StartX = X;
 		StartY = Y;
+		/* test rebild
 		DestX = mx;
 		DestY = my;
 
+		 */
+
 		// d = ((mx - X) * (mx - X)) + ((my - Y) * (my - Y));
 		// d = (float) Math.sqrt(d);
+		/* test rebild
 		d = (float) dist(mx, my, X, Y);
+
+		 */
 		t = d / v;
 		vx = (DestX - StartX) / t;
 		vy = (DestY - StartY) / t;
@@ -81,6 +91,7 @@ class Pers {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				/* test rebild
 				if (mx - X < 0 && my - Y < 0) {
 					X += vx;
 					Y += vy;
@@ -97,6 +108,8 @@ class Pers {
 					vx = 0;
 					vy = 0;
 				}
+
+				 */
 
 				// ??????????? DestX, Y - ?????? ??? ??? ????? ???????????
 				// ?????? ? ??????
@@ -122,24 +135,32 @@ class Pers {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setStroke(new BasicStroke(10.0f));
 			g.setColor(Color.yellow);
+			/* test rebild
 			int X = r(Math.round(StartX));
 			int Y = r(Math.round(StartY));
 			int X2 = r(Math.round(DestX));
 			int Y2 = r(Math.round(DestY));
+
+
 			g.drawLine(X - 1, Y,X2, Y2);
 			g.setColor(Color.white);
 			g.drawLine(X + 1, Y + 1,X2, Y2);
 			g.setColor(Color.black);
 			g.drawLine(X, Y,
 					X2, Y2);
+
+			 */
+
 			g2.setStroke(new BasicStroke(1.0f));
 		}
 
 		int XX = Math.round(X) - PersR;
 		int YY = Math.round(Y) - PersR;
-
+/* test rebild
 		if (X + PersR < 0 || Y + PersR < 0 || r(X) > panel.getWidth()
 				|| r(Y) > panel.getHeight()) {
+
+
 			// ??????? ????? ??????????? ? ????? X ? Y. ??, ??????? ?? 0 -
 			// ???????????? (?????? ??? ?????????)
 			int interX = -1;
@@ -218,6 +239,8 @@ class Pers {
 			CircleX = -100;
 			CircleY = -100;
 		}
+
+ */
 
 	}
 
