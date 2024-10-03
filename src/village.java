@@ -9,33 +9,33 @@ import javax.imageio.ImageIO;
 
 public class village {
 
-	private Image vilageImg;// картинка самого горoда
-	private Image pictureVilageImg;// картинка которая будет отображаться на
-									// карте
-	boolean citeIsOpen = false;
-	float X , Y ;
-	int persR = 30;
+    private Image vilageImg;// картинка самого горoда
+    private Image pictureVilageImg;// картинка которая будет отображаться на
+    // карте
+    boolean citeIsOpen = false;
+    float X, Y;
+    int persR = 30;
 
-	int vilagePictureHeight;
-	int vilagePictureWidth ;
-	int vilageWidth ;
-	int vilageHeight ;
+    int vilagePictureHeight;
+    int vilagePictureWidth;
+    int vilageWidth;
+    int vilageHeight;
 
-	public void loadImageVilageImg(URL resource) throws IOException {
-		vilageImg = ImageIO.read(resource);
-		vilageHeight = 10;
-		vilageWidth = 10;
-	}
+    public void loadImageVilageImg(URL resource) throws IOException {
+        vilageImg = ImageIO.read(resource);
+        vilageHeight = 10;
+        vilageWidth = 10;
+    }
 
-	public void loadImagePictureVilageImg(URL resource) throws IOException {
-		pictureVilageImg = ImageIO.read(resource);
-		vilagePictureHeight = 10;
-		vilagePictureWidth = 10;
-	}
+    public void loadImagePictureVilageImg(URL resource) throws IOException {
+        pictureVilageImg = ImageIO.read(resource);
+        vilagePictureHeight = 10;
+        vilagePictureWidth = 10;
+    }
 
-	public village() {
+    public village() {
 
-	}
+    }
 /* test rebild
 	static int r(double x) {
 		return (int) (x * Map.scale);
@@ -47,14 +47,14 @@ public class village {
 
  */
 
-	static double dist(double x1, double y1, double x2, double y2) {
-		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-	}
+    static double dist(double x1, double y1, double x2, double y2) {
+        return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    }
 
-	public void draw(Graphics g) {
+    public void draw(Graphics g) {
 
-		int roundedShiftedX = Math.round(X) - persR;
-		int roundedShiftedY = Math.round(Y) - persR;
+        int roundedShiftedX = Math.round(X) - persR;
+        int roundedShiftedY = Math.round(Y) - persR;
 		
 /* test rebild
 		if (citeIsOpen == true) {// рисоваться должно на MapPanel
@@ -68,12 +68,12 @@ public class village {
 		}
 
  */
-	}
+    }
 
-	public void shiftXY(Point2D shift) {
-		X += shift.getX();
-		Y += shift.getY();
+    public void shiftXY(Point2D shift) {
+        X += shift.getX();
+        Y += shift.getY();
 
-	}
+    }
 
 }

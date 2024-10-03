@@ -11,35 +11,34 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 class panel extends JPanel {
-	Map map;
-	public GlobalLoadImg globalLoadImg;
-	Shifting shifting;
+    Map map;
+    public GlobalLoadImg globalLoadImg;
+    Shifting shifting;
 
 
-	// -------------------------------------------------------
-	public panel() {
-		setLayout(null);
+    // -------------------------------------------------------
+    public panel() {
+        setLayout(null);
 
-		globalLoadImg = new GlobalLoadImg();
-		shifting = new Shifting();
-		map = new Map(this);
+        globalLoadImg = new GlobalLoadImg();
+        shifting = new Shifting();
+        map = new Map(this);
 
 
-		//Pers.init(this, X, Y);
+        //Pers.init(this, X, Y);
 
-	}
+    }
 
-	// -------------------------------------------------------
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+    // -------------------------------------------------------
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-		map.draw(g);
-		Pers.draw(g);
-		if(redactor.r!=null)
-			redactor.r.draw(g);
-	}
-
+        map.draw(g);
+        Pers.draw(g);
+        if (redactor.r != null)
+            redactor.r.draw(g);
+    }
 
 
 }

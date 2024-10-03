@@ -53,183 +53,184 @@ import com.google.gson.stream.JsonWriter;
 public class redactor implements MouseMotionListener, MouseListener {
 
 
-	MapLocation MapLoc;//класс с хранение всех данных о локации
-	boolean leftMauseButonIsPresd;
-	ArrayList<MapLocation> locations = new ArrayList<>();//все локации
+    MapLocation MapLoc;//класс с хранение всех данных о локации
+    boolean leftMauseButonIsPresd;
+    ArrayList<MapLocation> locations = new ArrayList<>();//все локации
 
-	static redactor r;
-	int X;
-	int Y;
-	int drowingX;
-	int drowingY;
-	boolean deletPoligon;
-	JRadioButton radBtn[] = new JRadioButton[3];//типы локаций
-	String[] nameLocation = { "forest", "city", "woter" };//имена локаций
-	ButtonGroup bg = new ButtonGroup();
+    static redactor r;
+    int X;
+    int Y;
+    int drowingX;
+    int drowingY;
+    boolean deletPoligon;
+    JRadioButton radBtn[] = new JRadioButton[3];//типы локаций
+    String[] nameLocation = {"forest", "city", "woter"};//имена локаций
+    ButtonGroup bg = new ButtonGroup();
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		GLOBALS.mode = "editor";
-		new okno();
-		r = new redactor();
-		okno.p.setFocusable(true);
+        GLOBALS.mode = "editor";
+        new okno();
+        r = new redactor();
+        okno.p.setFocusable(true);
 
-	}
+    }
 
-	public redactor() {
-		readJson();// вызываем функцию по прочтению
-		JButton btnNewButton_1 = new JButton("сохранить");
-		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnNewButton_1.setBounds(0, 0, 120, 70);
-		btnNewButton_1.addActionListener(new ActionListener() {
+    public redactor() {
+        readJson();// вызываем функцию по прочтению
+        JButton btnNewButton_1 = new JButton("сохранить");
+        btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        btnNewButton_1.setBounds(0, 0, 120, 70);
+        btnNewButton_1.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				writeJson();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                writeJson();
 
-			}
+            }
 
-		});
-		JButton btnNewButton_2 = new JButton("удалить");
-		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnNewButton_2.setBounds(120, 0, 120, 70);
-		btnNewButton_2.addActionListener(new ActionListener() {
+        });
+        JButton btnNewButton_2 = new JButton("удалить");
+        btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        btnNewButton_2.setBounds(120, 0, 120, 70);
+        btnNewButton_2.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (deletPoligon == true) {
-					deletPoligon = false;
-					return;
-				}
-				deletPoligon = true;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (deletPoligon == true) {
+                    deletPoligon = false;
+                    return;
+                }
+                deletPoligon = true;
 
 
-			}
+            }
 
-		});
+        });
 
-		for (int i = 0; i < nameLocation.length; i++) {
-			radBtn[i] = new JRadioButton();
-			radBtn[i].setText(nameLocation[i]);
-			radBtn[i].setBounds(240, i * 30, 100, 30);
-			bg.add(radBtn[i]);
-			okno.p.add(radBtn[i]);
+        for (int i = 0; i < nameLocation.length; i++) {
+            radBtn[i] = new JRadioButton();
+            radBtn[i].setText(nameLocation[i]);
+            radBtn[i].setBounds(240, i * 30, 100, 30);
+            bg.add(radBtn[i]);
+            okno.p.add(radBtn[i]);
 
-		}
-		radBtn[0].setSelected(true);
-		okno.p.add(btnNewButton_1);
-		okno.p.add(btnNewButton_2);
-		okno.p.addMouseListener(this);
-		okno.p.addMouseMotionListener(this);
+        }
+        radBtn[0].setSelected(true);
+        okno.p.add(btnNewButton_1);
+        okno.p.add(btnNewButton_2);
+        okno.p.addMouseListener(this);
+        okno.p.addMouseMotionListener(this);
 
-	}
+    }
 
-	private void readJson() {
-		String json=null;
-		Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-		ArrayList<MapLocationToSave> tempLocations = new ArrayList<MapLocationToSave>();//временное хранилище перобразованых локаций для чтения из json
-		File f = new File("location.txt");//читаем файл и записываем его в переменную json
-		if (f.exists())
-			try {
-				FileInputStream ff = new FileInputStream(f);
-				InputStreamReader r = new InputStreamReader(ff);
-				BufferedReader b = new BufferedReader(r);
-				json = b.readLine();
-				b.close();
-				r.close();
-				ff.close();
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "read:\n" + e.toString());
-				e.printStackTrace();
-			}
-		if (json==null) {//если ничего то не идем дальше
-			return;
-		}
-		tempLocations= gBilder.fromJson(json,new TypeToken<ArrayList<MapLocationToSave>>(){}.getType());//чтение Json с указанеим типа
+    private void readJson() {
+        String json = null;
+        Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        ArrayList<MapLocationToSave> tempLocations = new ArrayList<MapLocationToSave>();//временное хранилище перобразованых локаций для чтения из json
+        File f = new File("location.txt");//читаем файл и записываем его в переменную json
+        if (f.exists())
+            try {
+                FileInputStream ff = new FileInputStream(f);
+                InputStreamReader r = new InputStreamReader(ff);
+                BufferedReader b = new BufferedReader(r);
+                json = b.readLine();
+                b.close();
+                r.close();
+                ff.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "read:\n" + e.toString());
+                e.printStackTrace();
+            }
+        if (json == null) {//если ничего то не идем дальше
+            return;
+        }
+        tempLocations = gBilder.fromJson(json, new TypeToken<ArrayList<MapLocationToSave>>() {
+        }.getType());//чтение Json с указанеим типа
 
-		for (int i=0; i < tempLocations.size();i++){//тут записваем все прочитаное в основной класс с помщю которого все рабоет
-				newLocation();
-				for (int j = 0; j < tempLocations.get(i).x.length; j++) {
-					MapLoc.p.addPoint(tempLocations.get(i).x[j],tempLocations.get(i).y[j]);
-				}
-				MapLoc.TypeLocation=tempLocations.get(i).TypeLocation;
-				locations.add(MapLoc);
-		}
-		newLocation();
-	}
+        for (int i = 0; i < tempLocations.size(); i++) {//тут записваем все прочитаное в основной класс с помщю которого все рабоет
+            newLocation();
+            for (int j = 0; j < tempLocations.get(i).x.length; j++) {
+                MapLoc.p.addPoint(tempLocations.get(i).x[j], tempLocations.get(i).y[j]);
+            }
+            MapLoc.TypeLocation = tempLocations.get(i).TypeLocation;
+            locations.add(MapLoc);
+        }
+        newLocation();
+    }
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	protected void writeJson() {
-		Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();//ghjrfxtyfz dthcbz
-		MapLocationToSave locToSave;
-		ArrayList<MapLocationToSave> tempLocations = new ArrayList<MapLocationToSave>();//временное хранилище перобразованых локаций для хранения в json
-		String json;//текст файла json
-		if(locations.size()>0)
-		for (int i = 0; i < locations.size(); i++) {//переносим все точки полигона в масивы в специальный класс т.к. Gson(библиотека) не умеет хранить Poligon
-													//при добавлении новой перемнной в класс MapLocation нужно добавить в класс помошник и добавть ниже присвение перемнной из основного в помошник
-			locToSave = new MapLocationToSave();
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    protected void writeJson() {
+        Gson gBilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();//ghjrfxtyfz dthcbz
+        MapLocationToSave locToSave;
+        ArrayList<MapLocationToSave> tempLocations = new ArrayList<MapLocationToSave>();//временное хранилище перобразованых локаций для хранения в json
+        String json;//текст файла json
+        if (locations.size() > 0)
+            for (int i = 0; i < locations.size(); i++) {//переносим все точки полигона в масивы в специальный класс т.к. Gson(библиотека) не умеет хранить Poligon
+                //при добавлении новой перемнной в класс MapLocation нужно добавить в класс помошник и добавть ниже присвение перемнной из основного в помошник
+                locToSave = new MapLocationToSave();
 
 			/*locToSave.x = locations.get(i).p.xpoints.clone();//я не заню почему не работает это
 			locToSave.y = locations.get(i).p.ypoints.clone();*///поэтому пришлось писать это:
-			locToSave.x= new int[locations.get(i).p.npoints];
-			locToSave.y= new int[locations.get(i).p.npoints];
-			for (int j = 0; j < locations.get(i).p.npoints; j++) {
-				locToSave.x[j] = locations.get(i).p.xpoints[j];
-				locToSave.y[j] = locations.get(i).p.ypoints[j];
-			}
-			locToSave.TypeLocation=locations.get(i).TypeLocation;
-			tempLocations.add(locToSave);
-		}
-		json = gBilder.toJson(tempLocations);
+                locToSave.x = new int[locations.get(i).p.npoints];
+                locToSave.y = new int[locations.get(i).p.npoints];
+                for (int j = 0; j < locations.get(i).p.npoints; j++) {
+                    locToSave.x[j] = locations.get(i).p.xpoints[j];
+                    locToSave.y[j] = locations.get(i).p.ypoints[j];
+                }
+                locToSave.TypeLocation = locations.get(i).TypeLocation;
+                tempLocations.add(locToSave);
+            }
+        json = gBilder.toJson(tempLocations);
 
 
-		File f = new File("location.txt");//создание и сохранение файла
-		try {
-			f.createNewFile();
-			FileOutputStream ff = new FileOutputStream(f);
-			OutputStreamWriter r = new OutputStreamWriter(ff);
-			BufferedWriter w = new BufferedWriter(r);
-			w.write(json);
+        File f = new File("location.txt");//создание и сохранение файла
+        try {
+            f.createNewFile();
+            FileOutputStream ff = new FileOutputStream(f);
+            OutputStreamWriter r = new OutputStreamWriter(ff);
+            BufferedWriter w = new BufferedWriter(r);
+            w.write(json);
 
-			w.close();
-			r.close();
-			ff.close();
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "write:\n" + e.toString());
-			e.printStackTrace();
-		}
-	}
+            w.close();
+            r.close();
+            ff.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "write:\n" + e.toString());
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		drowingX = e.getX();
-		drowingY = e.getY();
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        drowingX = e.getX();
+        drowingY = e.getY();
 
-	}
+    }
 
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		drowingX = e.getX();
-		drowingY = e.getY();
-	}
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        drowingX = e.getX();
+        drowingY = e.getY();
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
+    @Override
+    public void mouseClicked(MouseEvent e) {
 
-	}
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		drowingX = e.getX();
-		drowingY = e.getY();
+    @Override
+    public void mousePressed(MouseEvent e) {
+        drowingX = e.getX();
+        drowingY = e.getY();
 		/* test rebild
 
 		if (e.getButton() == 1 &&deletPoligon == false) {
@@ -265,32 +266,33 @@ public class redactor implements MouseMotionListener, MouseListener {
 
 			}
 		}*/
-	}
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		drowingX = e.getX();
-		drowingY = e.getY();
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        drowingX = e.getX();
+        drowingY = e.getY();
 
-	}
+    }
 
-	public void shiftXY(Point2D shift) {
-		X += (int) shift.getX();
-		Y += (int) shift.getY();
-	}
-	public void newLocation() {//создание новой локации
-		MapLoc = new MapLocation();
-		MapLoc.p =new Polygon();
-	}
+    public void shiftXY(Point2D shift) {
+        X += (int) shift.getX();
+        Y += (int) shift.getY();
+    }
 
-	public void draw(Graphics g) {
+    public void newLocation() {//создание новой локации
+        MapLoc = new MapLocation();
+        MapLoc.p = new Polygon();
+    }
 
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setStroke(new BasicStroke(2.5f));
+    public void draw(Graphics g) {
 
-		for (int i = 0; i < locations.size(); i++) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(2.5f));
 
-			for (int j = 0; j < locations.get(i).p.npoints; j++) {
+        for (int i = 0; i < locations.size(); i++) {
+
+            for (int j = 0; j < locations.get(i).p.npoints; j++) {
 
 				/*for (int a = 0; a < radBtn.length; a++) {//цвета нарисованых полигонов подумать как перделать этот код плох т.к. используються буквы в условиях
 					if (radBtn[a].isSelected()) {
@@ -323,11 +325,11 @@ public class redactor implements MouseMotionListener, MouseListener {
 							(int) ((Math.round(locations.get(i).p.ypoints[0]) + Y) * Map.scale));
 
 				}*/
-			}
+            }
 
-		}
+        }
 
-		if (MapLoc!=null &&MapLoc.p.npoints >= 1) {
+        if (MapLoc != null && MapLoc.p.npoints >= 1) {
 			/*for (int a = 0; a < radBtn.length; a++) {//цвета нарисованых полигонов подумать как перделать, этот код плох т.к. используються буквы в условиях
 				if (radBtn[a].isSelected()) {
 					switch (radBtn[a].getText()) {
@@ -353,20 +355,20 @@ public class redactor implements MouseMotionListener, MouseListener {
 				g2.drawLine((int) ((Math.round(MapLoc.p.xpoints[MapLoc.p.npoints - 1]) + X) * Map.scale),
 						(int) ((Math.round(MapLoc.p.ypoints[MapLoc.p.npoints - 1]) + Y) * Map.scale), drowingX, drowingY);
 */
-			for (int i = 0; i < MapLoc.p.npoints; i++) {// отрисовка на момент создания и редактирования полигона
+            for (int i = 0; i < MapLoc.p.npoints; i++) {// отрисовка на момент создания и редактирования полигона
 
-				if (MapLoc.p.npoints > i + 1){
+                if (MapLoc.p.npoints > i + 1) {
 					/* test rebild
 					g2.drawLine((int) ((Math.round(MapLoc.p.xpoints[i]) + X) * Map.scale),
 							(int) ((Math.round(MapLoc.p.ypoints[i]) + Y) * Map.scale),
 							(int) ((Math.round(MapLoc.p.xpoints[i + 1]) + X) * Map.scale),
 							(int) ((Math.round(MapLoc.p.ypoints[i + 1]) + Y) * Map.scale));
 					*/
- 				}
-			}
-		}
+                }
+            }
+        }
 
-	}
+    }
 
 }
 //locations.get(locations.size()-1).p. .... надо в отдельную функцию запихнуть

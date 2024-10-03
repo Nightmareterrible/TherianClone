@@ -24,7 +24,7 @@ class Map {
     public void draw(Graphics g) {
         for (int i = 0; i < amountTileX; i++) {
             for (int j = 0; j < amountTileY; j++) {
-                Shifting.drowAutoScaleAndShifting(g,mapTiles[i][j].tileImage,mapTiles[i][j].getX(),mapTiles[i][j].getY(),MAP_TILE_WIDTH,MAP_TILE_HEIGHT,null);
+                Shifting.drowAutoScaleAndShifting(g, mapTiles[i][j].tileImage, mapTiles[i][j].getX(), mapTiles[i][j].getY(), MAP_TILE_WIDTH, MAP_TILE_HEIGHT, null);
             }
         }
     }
