@@ -33,7 +33,6 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
 
     @Override
     public void mousePressed(MouseEvent e) {
-
     }
 
     @Override
