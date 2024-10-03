@@ -33,6 +33,7 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
 
     @Override
     public void mousePressed(MouseEvent e) {
+
     }
 
     @Override
@@ -139,7 +140,6 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     public static void drowAutoScaleAndShifting(Graphics g, Image image, int x, int y, int width, int height, java.awt.image.ImageObserver observer) {
         g.drawImage(image, getCoordinatesByMapX(x), getCoordinatesByMapY(y), getDrowWidth(width), getDrowHeight(height), observer);
     }
-
     public static void drowAutoScaleAndShifting(Graphics g, Image image, int x, int y, java.awt.image.ImageObserver observer) {
         g.drawImage(image, getCoordinatesByMapX(x), getCoordinatesByMapY(y), observer);
     }

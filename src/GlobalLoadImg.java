@@ -11,12 +11,12 @@ public class GlobalLoadImg {
 
     }
 
-    public Image MapTileLoad(int tileX, int tileY) throws Exception  {// загрузка тайлов карты
+    public Image MapTileLoad(int tileX, int tileY) throws Exception {// загрузка тайлов карты
 
         Image MapImages = null;
         try {
             MapImages = ImageIO.read(this.getClass().getResource("/img/maps/map" + tileX + "," + tileY + ".png"));
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return MapImages;
