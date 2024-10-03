@@ -6,11 +6,11 @@ import java.awt.geom.Point2D;
 
 class Map {
     private panel panel;
-    final int MAP_TILE_WGHT = 500;
+    public static final int MAP_TILE_WIDTH = 500;
 
-    final int MAP_TILE_HIGHT = 500;
-    int amountTileX = 30;
-    int amountTileY = 20;
+    public static final int MAP_TILE_HEIGHT = 500;
+    public static final int amountTileX = 30;
+    public static final int amountTileY = 20;
 
     MapTile mapTiles[][] = new MapTile[amountTileX][amountTileY];//массив тайлов условная карта раздела на маленькие части
 
@@ -24,14 +24,7 @@ class Map {
     public void draw(Graphics g) {
         for (int i = 0; i < amountTileX; i++) {
             for (int j = 0; j < amountTileY; j++) {
-
-                    g.drawImage(mapTiles[i][j].tileImage, (int) Math.ceil((mapTiles[i][j].getX() + okno.p.shifting.getShiftX())*okno.p.shifting.getScale()),
-                                                        (int) Math.ceil((mapTiles[i][j].getY() + okno.p.shifting.getShiftY())*okno.p.shifting.getScale()),
-                                                        (int) Math.ceil(MAP_TILE_WGHT*okno.p.shifting.getScale()),
-                                                        (int) Math.ceil(MAP_TILE_WGHT*okno.p.shifting.getScale()),
-                                                        null);
-
-
+                Shifting.drowAutoScaleAndShifting(g,mapTiles[i][j].tileImage,mapTiles[i][j].getX(),mapTiles[i][j].getY(),MAP_TILE_WIDTH,MAP_TILE_HEIGHT,null);
             }
         }
     }
@@ -42,7 +35,7 @@ class Map {
                 MapTile tile = new MapTile();
                 tile.setNumberX(i);
                 tile.setNumberY(j);
-                tile.setCoordinates(new Point(MAP_TILE_WGHT * i, MAP_TILE_HIGHT * j));
+                tile.setCoordinates(new Point(MAP_TILE_WIDTH * i, MAP_TILE_HEIGHT * j));
                 try {
                     tile.tileImage = panel.globalLoadImg.MapTileLoad(i, j);
                 } catch (Exception e) {

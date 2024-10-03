@@ -13,20 +13,19 @@ import javax.swing.JPanel;
 class panel extends JPanel {
 	Map map;
 	public GlobalLoadImg globalLoadImg;
-	SizeAndScrol sizeAndScrol;
 	Shifting shifting;
 
 
 	// -------------------------------------------------------
 	public panel() {
-		globalLoadImg = new GlobalLoadImg();
 		setLayout(null);
-		shifting = new Shifting();
 
+		globalLoadImg = new GlobalLoadImg();
+		shifting = new Shifting();
 		map = new Map(this);
-		float X = (int) (Math.random() * 500);
-		float Y = (int) (Math.random() * 500);
-		Pers.init(this, X, Y);
+
+
+		//Pers.init(this, X, Y);
 
 	}
 
@@ -38,10 +37,7 @@ class panel extends JPanel {
 		map.draw(g);
 		Pers.draw(g);
 		if(redactor.r!=null)
-		redactor.r.draw(g);
-		
-
-		g.setColor(Color.white);
+			redactor.r.draw(g);
 	}
 
 
