@@ -137,11 +137,11 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         previousMouseY = 0;
     }
 
-    public static void drowAutoScaleAndShifting(Graphics g, Image image, int x, int y, int width, int height, java.awt.image.ImageObserver observer) {
-        g.drawImage(image, getCoordinatesByMapX(x), getCoordinatesByMapY(y), getDrowWidth(width), getDrowHeight(height), observer);
+    public static void drowAutoScaleAndShiftingImage(Graphics g, Image image, int x, int y, int width, int height, java.awt.image.ImageObserver observer) {
+        g.drawImage(image, getWindowPointFromMapCoordinatesX(x), getWindowPointFromMapCoordinatesY(y), getDrowWidth(width), getDrowHeight(height), observer);
     }
-    public static void drowAutoScaleAndShifting(Graphics g, Image image, int x, int y, java.awt.image.ImageObserver observer) {
-        g.drawImage(image, getCoordinatesByMapX(x), getCoordinatesByMapY(y), observer);
+    public static void drowAutoScaleAndShiftingImage(Graphics g, Image image, int x, int y, java.awt.image.ImageObserver observer) {
+        g.drawImage(image, getWindowPointFromMapCoordinatesX(x), getWindowPointFromMapCoordinatesY(y), observer);
     }
 
     //getters and setters
@@ -154,20 +154,20 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         return (int) Math.ceil(height * scale);
     }
 
-    public static int getCoordinatesByMapX(int x) {//получить координату на карте относительно точки на карте (подходит для отрисовки)
+    public static int getWindowPointFromMapCoordinatesX(int x) {//получить координату на окне относительно точки на карте (подходит для отрисовки)
         return (int) Math.ceil((x + shiftX) * scale);
     }
 
-    public static int getCoordinatesByMapY(int y) {//получить координату на карте относительно точки на карте (подходит для отрисовки)
+    public static int getWindowPointFromMapCoordinatesY(int y) {//получить координату на карте относительно точки на карте (подходит для отрисовки)
         return (int) Math.ceil((y + shiftY) * scale);
     }
 
-    public static int getCoordinatesByPositionOnWindowX(int x) {//получить координату на карте относительно точки на окне
+    public static int getCoordinatesOnMapFromWindowPointX(int x) {//получить координату на карте относительно точки на окне
         // (подходит для получения координаты(к примеру от клика мыши))
         return (int) (x / getScale() - shiftX);
     }
 
-    public static int getCoordinatesByPositionOnWindowY(int y) {//получить координату на карте относительно точки на окне
+    public static int getCoordinatesOnMapFromWindowPointY(int y) {//получить координату на карте относительно точки на окне
         // (подходит для получения координаты(к примеру от клика мыши))
         return (int) (y / getScale() - shiftY);
     }

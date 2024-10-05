@@ -11,6 +11,7 @@ class Map {
     public static final int MAP_TILE_HEIGHT = 500;
     public static final int amountTileX = 30;
     public static final int amountTileY = 20;
+    static boolean moveMap = true;//TODO реолизоватиь функционал
 
     MapTile mapTiles[][] = new MapTile[amountTileX][amountTileY];//массив тайлов условная карта раздела на маленькие части
 
@@ -24,7 +25,7 @@ class Map {
     public void draw(Graphics g) {
         for (int i = 0; i < amountTileX; i++) {
             for (int j = 0; j < amountTileY; j++) {
-                Shifting.drowAutoScaleAndShifting(g,mapTiles[i][j].tileImage,mapTiles[i][j].getX(),mapTiles[i][j].getY(),MAP_TILE_WIDTH,MAP_TILE_HEIGHT,null);
+                Shifting.drowAutoScaleAndShiftingImage(g,mapTiles[i][j].tileImage,mapTiles[i][j].getX(),mapTiles[i][j].getY(),MAP_TILE_WIDTH,MAP_TILE_HEIGHT,null);
             }
         }
     }
@@ -45,6 +46,14 @@ class Map {
                 mapTiles[i][j] = tile;
             }
         }
+    }
+
+    public static boolean isMoveMap() {
+        return moveMap;
+    }
+
+    public static void setMoveMap(boolean moveMap) {
+        Map.moveMap = moveMap;
     }
 }
 
@@ -101,4 +110,5 @@ class MapTile {
     public void setTileImage(Image tileImage) {
         this.tileImage = tileImage;
     }
+
 }

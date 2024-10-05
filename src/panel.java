@@ -14,6 +14,10 @@ class panel extends JPanel {
     Map map;
     public GlobalLoadImg globalLoadImg;
     Shifting shifting;
+    Pawn p;
+
+    MainCharacter mainCharacter;
+
 
 
     // -------------------------------------------------------
@@ -23,9 +27,12 @@ class panel extends JPanel {
         globalLoadImg = new GlobalLoadImg();
         shifting = new Shifting();
         map = new Map(this);
+        if(GLOBALS.mode != "editor") {
+            mainCharacter = new MainCharacter();
+            addMouseListener(mainCharacter);
+        }
 
 
-        //Pers.init(this, X, Y);
 
     }
 
@@ -35,7 +42,9 @@ class panel extends JPanel {
         super.paintComponent(g);
 
         map.draw(g);
-        Pers.draw(g);
+        if(GLOBALS.mode != "editor") {
+            mainCharacter.draw(g);
+        }
         if (redactor.r != null)
             redactor.r.draw(g);
     }

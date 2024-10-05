@@ -9,7 +9,7 @@ public class MapLocation {
 	@Expose
 	String TypeLocation;
 }
- class MapLocationToSave {
+class MapLocationToSave {
 
 	@Expose
 	int x[];

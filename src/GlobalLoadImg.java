@@ -22,10 +22,10 @@ public class GlobalLoadImg {
         return MapImages;
     }
 
-    public Image CharacterLoad() {// Загрузка игрока
-        Image CharacterImage;
+    public static Image CharacterLoad() {// Загрузка игрока
+        Image CharacterImage = null;
         try {
-            CharacterImage = ImageIO.read(this.getClass().getResource("/img/Character.png"));
+            CharacterImage = ImageIO.read(GlobalLoadImg.class.getResource("/img/Character.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
