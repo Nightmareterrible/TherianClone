@@ -47,8 +47,6 @@ class Map {
 
 
                         // mapTiles[i][j].tileImage = okno.p.globalLoadImg.MapTileLoad(i, j);
-
-
                     }
                     mapTiless[i][j] = 1;
                 } else {
