@@ -15,7 +15,8 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     int previousMouseY = 0;//previous-предыдущий
     int deltaShiftY = 0;
     static int shiftY = 0;
-
+    static boolean shifting = true;
+    static boolean scaling = true;
     static double scale = MIN_SCALE;
 
 
@@ -38,7 +39,8 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        ResetPreviousMouseCoordinates();
+        if (isShifting())
+            ResetPreviousMouseCoordinates();
     }
 
 
@@ -54,7 +56,8 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        colculeteShiftXAndY(e);
+        if (isShifting())
+            colculeteShiftXAndY(e);
     }
 
 
@@ -65,7 +68,8 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        colculeteScale(e);
+        if (isScaling())
+            colculeteScale(e);
 
     }
 
@@ -82,25 +86,27 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
                 adjustShiftOnScrollUp(e);
             }
         }
+        Map.updateMap();
     }
 
     private void adjustShiftOnScrollDown(MouseWheelEvent e) {//adjust-регулировать
-        int sizeMapOnScreеnX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
-        int sizeMapOnScreеnY = (int) ((okno.windowHight) * Math.pow(scale, -1));
-        if (Math.abs(shiftX + deltaShiftX * Math.pow(scale / 2, -1)) >= MAX_MAP_SIZE_ON_SREEN_X - 280 - sizeMapOnScreеnX) {
+        int sizeMapOnScreenX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
+        int sizeMapOnScreenY = (int) ((okno.windowHight) * Math.pow(scale, -1));
+        if (Math.abs(shiftX + deltaShiftX * Math.pow(scale / 2, -1)) >= MAX_MAP_SIZE_ON_SREEN_X - 280 - sizeMapOnScreenX) {
             //280 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 15240 при сильно масштаировании идет искажение
-            shiftX = (MAX_MAP_SIZE_ON_SREEN_X - sizeMapOnScreеnX) * -1 / 2;
+            shiftX = (MAX_MAP_SIZE_ON_SREEN_X - sizeMapOnScreenX) * -1 / 2;
         }
-        if (Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) >= MAX_MAP_SIZE_ON_SREEN_Y - 540 - sizeMapOnScreеnY) {
+        if (Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) >= MAX_MAP_SIZE_ON_SREEN_Y - 540 - sizeMapOnScreenY) {
             //540 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 10640 при сильно масштаировании идет искажение
-            shiftY = (MAX_MAP_SIZE_ON_SREEN_Y - sizeMapOnScreеnY) * -1 / 2;
+            shiftY = (MAX_MAP_SIZE_ON_SREEN_Y - sizeMapOnScreenY) * -1 / 2;
         }
-
+        Map.updateMap();
     }
 
     private void adjustShiftOnScrollUp(MouseWheelEvent e) {//adjust-регулировать
         shiftX = (int) (shiftX - e.getX() / scale);
         shiftY = (int) (shiftY - e.getY() / scale);
+        Map.updateMap();
     }
 
 
@@ -108,9 +114,9 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         //   X   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (previousMouseX != 0) {
             deltaShiftX = e.getX() - previousMouseX;
-            int sizeMapOnScreеnX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
+            int sizeMapOnScreenX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
 
-            if (shiftX + deltaShiftX * Math.pow(scale, -1) <= 0 && Math.abs(shiftX + deltaShiftX * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_X - 280 - sizeMapOnScreеnX) {
+            if (shiftX + deltaShiftX * Math.pow(scale, -1) <= 0 && Math.abs(shiftX + deltaShiftX * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_X - 280 - sizeMapOnScreenX) {
                 //280 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 15240 при сильном масштаировании идет искажение
                 shiftX += deltaShiftX * Math.pow(scale, -1);
             }
@@ -121,8 +127,8 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         //   Y   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (previousMouseY != 0) {
             deltaShiftY = e.getY() - previousMouseY;
-            int sizeMapOnScreеnY = (int) ((okno.windowHight) * Math.pow(scale, -1));
-            if (shiftY + deltaShiftY * Math.pow(scale, -1) <= 0 && Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_Y - 540 - sizeMapOnScreеnY) {
+            int sizeMapOnScreenY = (int) ((okno.windowHight) * Math.pow(scale, -1));
+            if (shiftY + deltaShiftY * Math.pow(scale, -1) <= 0 && Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_Y - 540 - sizeMapOnScreenY) {
                 //540 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 10640 при сильно масштаировании идет искажение
                 shiftY += deltaShiftY * Math.pow(scale, -1);
             }
@@ -130,6 +136,7 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         } else {
             previousMouseY = e.getY();
         }
+        Map.updateMap();
     }
 
     private void ResetPreviousMouseCoordinates() {//previous-предыдущий
@@ -145,6 +152,23 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     }
 
     //getters and setters
+
+
+    public static boolean isScaling() {
+        return scaling;
+    }
+
+    public static void setScaling(boolean scaling) {
+        Shifting.scaling = scaling;
+    }
+
+    public static boolean isShifting() {
+        return shifting;
+    }
+
+    public static void setShifting(boolean shifting) {
+        Shifting.shifting = shifting;
+    }
 
     public static int getDrowWidth(int width) {//получить длину для отрисовки
         return (int) Math.ceil(width * scale);

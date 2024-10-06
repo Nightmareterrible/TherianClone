@@ -60,7 +60,7 @@ public class redactor implements MouseMotionListener, MouseListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 writeJson();
-
+                btnNewButton_1.setFocusable(false);
             }
 
         });
@@ -71,11 +71,6 @@ public class redactor implements MouseMotionListener, MouseListener {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                /*if (deletPoligon == true) {
-                    deletPoligon = false;
-                    return;
-                }
-                deletPoligon = true;*/
                 deletPoligon = !deletPoligon;
                 btnNewButton_2.setFocusable(false);
             }

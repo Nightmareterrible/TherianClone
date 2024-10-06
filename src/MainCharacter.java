@@ -8,8 +8,8 @@ class MainCharacter extends Pawn implements MouseListener, MouseMotionListener {
 
     Image iconCharacter;
     int speed = 90;//скорость в секунду
-    int moveToThisXLine; //TODO придумать норм имена
-    int moveToThisYLine;
+    int moveToThisXForLine;
+    int moveToThisYForLine;
     Timer move;
 
     public MainCharacter() {
@@ -23,7 +23,7 @@ class MainCharacter extends Pawn implements MouseListener, MouseMotionListener {
     public void draw(Graphics g) {
         if (move != null && move.isRunning()) {
             g.drawLine(Shifting.getWindowPointFromMapCoordinatesX((int) getX()), Shifting.getWindowPointFromMapCoordinatesY((int) getY()),
-                    Shifting.getWindowPointFromMapCoordinatesX(moveToThisXLine), Shifting.getWindowPointFromMapCoordinatesY(moveToThisYLine));
+                    Shifting.getWindowPointFromMapCoordinatesX(moveToThisXForLine), Shifting.getWindowPointFromMapCoordinatesY(moveToThisYForLine));
         }
         Shifting.drowAutoScaleAndShiftingImage(g, iconCharacter, (int) (getX() - iconCharacter.getWidth(null) / 2),
                 (int) (getY() - iconCharacter.getHeight(null) / 2),
@@ -34,19 +34,20 @@ class MainCharacter extends Pawn implements MouseListener, MouseMotionListener {
 
     public void moveTo(int moveToThisX, int moveToThisY) {
         float delay = 10.0F;//чем меньше, тем плавнее двигается персонаж
-        moveToThisXLine = moveToThisX;
-        moveToThisYLine = moveToThisY;
+        moveToThisXForLine = moveToThisX;
+        moveToThisYForLine = moveToThisY;
+
         move = new Timer((int) delay, new ActionListener() {
 
-            int deltaMoveToThisByX = (int) (moveToThisX - getX());
-            int deltaMoveToThisByY = (int) (moveToThisY - getY());
-            double lengthWay = Math.sqrt((Math.pow(deltaMoveToThisByX, 2) + Math.pow(deltaMoveToThisByY, 2)));
+            final int deltaMoveToThisByX = (int) (moveToThisX - getX());
+            final int deltaMoveToThisByY = (int) (moveToThisY - getY());
+            final double lengthWay = Math.sqrt((Math.pow(deltaMoveToThisByX, 2) + Math.pow(deltaMoveToThisByY, 2)));
 
             double countSteps = lengthWay / (speed * delay / 1000);
 
-            double stepByX = deltaMoveToThisByX / countSteps;
+            final double stepByX = deltaMoveToThisByX / countSteps;
 
-            double stepByY = deltaMoveToThisByY / countSteps;
+            final double stepByY = deltaMoveToThisByY / countSteps;
 
             @Override
             public void actionPerformed(ActionEvent e) {
