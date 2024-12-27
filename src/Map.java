@@ -1,161 +1,91 @@
-
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 
-import java.awt.geom.Point2D;
+import static com.sun.corba.se.impl.util.Utility.printStackTrace;
 
-
-class Map {
+// Класс Map для работы с большими изображениями
+public class Map {
     private panel panel;
-    public static final int MAP_TILE_WIDTH = 500;
-
-    public static final int MAP_TILE_HEIGHT = 500;
-    public static final int amountTileX = 30;
-    public static final int amountTileY = 20;
-
-
-    static MapTile[][] mapTiles = new MapTile[amountTileX][amountTileY];//массив тайлов условная карта раздела на маленькие части
-
+    BufferedImage imagePart;
 
     public Map(panel p) {
         panel = p;
-        loadFullMapTiles();
-        System.gc();
+        try {
+            String filePath = "src/img/map.png"; // Путь к изображению
+            int x = 0;
+            int y = 0; // Начальные координаты области загрузки
+            int width = 1500, height = 1000; // Размеры области загрузки
 
+            // Читаем часть изображения
+            imagePart = readImagePartially(filePath, x, y, width, height);
+
+            // Выводим информацию о загруженной части изображения
+            System.out.println("Part of the image loaded successfully.");
+            System.out.println("Image part dimensions: " + imagePart.getWidth() + "x" + imagePart.getHeight());
+
+        } catch (IOException e) {
+            System.err.println("Error reading image: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    public static void updateMap() {
-        int sizeMapOnScreenX = (int) ((okno.windowWidth) * Math.pow(Shifting.getScale(), -1));//
-        int sizeMapOnScreenY = (int) ((okno.windowHight) * Math.pow(Shifting.getScale(), -1));
-        int countMapTitelVisobilitiX = sizeMapOnScreenX / MAP_TILE_WIDTH;
-        int countMapTitelVisobilitiY = sizeMapOnScreenY / MAP_TILE_HEIGHT;
-        int mapTiless[][] = new int[amountTileX][amountTileY];
-
-        for (int i = 0; i < amountTileX; i++) {
-            for (int j = 0; j < amountTileY; j++) {
-                if (Shifting.MAX_MAP_SIZE_ON_SREEN_X - Math.abs(Shifting.getShiftX()) >= i*500 - 500 &&
-                        i*500 + 500 >= Math.abs(Shifting.getShiftX()) &&
-                        Shifting.MAX_MAP_SIZE_ON_SREEN_Y - Math.abs(Shifting.getShiftY()) >= j*500 - 500 &&
-                        j*500 + 500 >= Math.abs(Shifting.getShiftY())
-                ) {
-                    if (mapTiles[i][j].getTileImage() == null) {
-
-                        try {
-                            mapTiles[i][j].tileImage = okno.p.globalLoadImg.MapTileLoad(i, j);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-
-
-                        // mapTiles[i][j].tileImage = okno.p.globalLoadImg.MapTileLoad(i, j);
-                    }
-                    mapTiless[i][j] = 1;
-                } else {
-                    mapTiles[i][j].setTileImage(null);
-                    mapTiless[i][j] = 0;
-                }
-            }
-
-        }
-        System.gc();
-
-        for (int j = 0; j < amountTileY; j++) {
-            for (int i = 0; i < amountTileX; i++) {
-                System.out.print(mapTiless[i][j] + " ");
-            }
-            System.out.println("" + Math.abs(Shifting.getShiftX()));
+    public static BufferedImage readImagePartially(String filePath, int x, int y, int width, int height) throws IOException {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new IOException("File not found: " + filePath);
         }
 
+        ImageInputStream input = ImageIO.createImageInputStream(file);
+        Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
+        if (!readers.hasNext()) {
+            throw new IOException("No image readers found for file: " + filePath);
+        }
 
-        //System.out.println("");
+        ImageReader reader = readers.next();
+        reader.setInput(input);
+
+        ImageReadParam param = reader.getDefaultReadParam();
+        param.setSourceRegion(new java.awt.Rectangle(x, y, width, height)); // Указываем область загрузки
+
+        return reader.read(0, param); // Читаем указанную область изображения
+    }
+
+    public void UpdateMap() {
+
     }
 
     public void draw(Graphics g) {
-        for (int i = 0; i < amountTileX; i++) {
-            for (int j = 0; j < amountTileY; j++) {
-                if (mapTiles!= null && mapTiles[i][j] != null) {
-                    Shifting.drowAutoScaleAndShiftingImage(g, mapTiles[i][j].tileImage, mapTiles[i][j].getX(), mapTiles[i][j].getY(), MAP_TILE_WIDTH, MAP_TILE_HEIGHT, null);
-                    g.drawRect(Shifting.getWindowPointFromMapCoordinatesX(mapTiles[i][j].getX()), Shifting.getWindowPointFromMapCoordinatesY(mapTiles[i][j].getY()), 500, 500);
-                }
-            }
+        if (imagePart != null) {
+            Shifting.drowAutoScaleAndShiftingImage(g, imagePart, 0, 0, 1500, 1000, null);
+            //g.drawImage(imagePart, 0, 0, null); // Отображаем изображение начиная с точки (0, 0)
         }
     }
 
-    public void loadFullMapTiles() {
-        for (int i = 0; i < amountTileX; i++) {
-            for (int j = 0; j < amountTileY; j++) {
-                MapTile tile = new MapTile();
-                tile.setNumberX(i);
-                tile.setNumberY(j);
-                tile.setCoordinates(new Point(MAP_TILE_WIDTH * i, MAP_TILE_HEIGHT * j));
-                try {
-                    tile.tileImage = panel.globalLoadImg.MapTileLoad(i, j);
+    public static void main(String[] args) {
+        try {
+            String filePath = "src/img/map.png"; // Путь к изображению
+            int x = 0, y = 0; // Начальные координаты области загрузки
+            int width = 1500, height = 1000; // Размеры области загрузки
 
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+            // Читаем часть изображения
+            BufferedImage imagePart = readImagePartially(filePath, x, y, width, height);
 
-                mapTiles[i][j] = tile;
-            }
+            // Выводим информацию о загруженной части изображения
+            System.out.println("Part of the image loaded successfully.");
+            System.out.println("Image part dimensions: " + imagePart.getWidth() + "x" + imagePart.getHeight());
+
+        } catch (IOException e) {
+            System.err.println("Error reading image: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-
-}
-
-
-class MapTile {
-
-    Point2D coordinates;
-    int numberX;
-    int numberY;
-    Image tileImage;
-    Image tileImageLink;
-    boolean isVis;
-
-    public MapTile() {
-    }
-
-
-    //geters and seters
-
-    public int getX() {//тоже самое что и getCoordinates() только сокращеное написание
-        return (int) coordinates.getX();
-    }
-
-    public int getY() {//тоже самое что и getCoordinates() только сокращеное написание
-        return (int) coordinates.getY();
-    }
-
-    public Point2D getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Point2D coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public int getNumberX() {
-        return numberX;
-    }
-
-    public void setNumberX(int numberX) {
-        this.numberX = numberX;
-    }
-
-    public int getNumberY() {
-        return numberY;
-    }
-
-    public void setNumberY(int numberY) {
-        this.numberY = numberY;
-    }
-
-    public Image getTileImage() {
-        return tileImage;
-    }
-
-    public void setTileImage(Image tileImage) {
-        this.tileImage = tileImage;
-    }
 
 }

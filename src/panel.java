@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
-class panel extends JPanel {
+class panel extends JPanel implements ShiftingAdapter {
     Map map;
     public GlobalLoadImg globalLoadImg;
     Shifting shifting;
@@ -26,15 +26,14 @@ class panel extends JPanel {
 
         globalLoadImg = new GlobalLoadImg();
         shifting = new Shifting();
-        map = new Map(this);
+
+        map = new Map   (this);
         if(GLOBALS.mode != "editor") {
             mainCharacter = new MainCharacter();
             addMouseListener(mainCharacter);
         }
-
-
-
     }
+
 
     // -------------------------------------------------------
     @Override
@@ -50,4 +49,8 @@ class panel extends JPanel {
     }
 
 
+    @Override
+    public void updateShifting() {// этот метод вызывается из класса Shifting он нужен чтобы информировать разные классы и обекты о то что карта изменилась
+        map.UpdateMap();
+    }
 }

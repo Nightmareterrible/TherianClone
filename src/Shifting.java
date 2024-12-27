@@ -86,27 +86,26 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
                 adjustShiftOnScrollUp(e);
             }
         }
-        Map.updateMap();
+        updateShifting();
     }
 
     private void adjustShiftOnScrollDown(MouseWheelEvent e) {//adjust-регулировать
         int sizeMapOnScreenX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
         int sizeMapOnScreenY = (int) ((okno.windowHight) * Math.pow(scale, -1));
-        if (Math.abs(shiftX + deltaShiftX * Math.pow(scale / 2, -1)) >= MAX_MAP_SIZE_ON_SREEN_X - 280 - sizeMapOnScreenX) {
-            //280 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 15240 при сильно масштаировании идет искажение
+        if (Math.abs(shiftX + deltaShiftX * Math.pow(scale / 2, -1)) >= MAX_MAP_SIZE_ON_SREEN_X  - sizeMapOnScreenX) {
             shiftX = (MAX_MAP_SIZE_ON_SREEN_X - sizeMapOnScreenX) * -1 / 2;
         }
-        if (Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) >= MAX_MAP_SIZE_ON_SREEN_Y - 540 - sizeMapOnScreenY) {
-            //540 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 10640 при сильно масштаировании идет искажение
+        if (Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) >= MAX_MAP_SIZE_ON_SREEN_Y  - sizeMapOnScreenY) {
+
             shiftY = (MAX_MAP_SIZE_ON_SREEN_Y - sizeMapOnScreenY) * -1 / 2;
         }
-        Map.updateMap();
+        updateShifting();
     }
 
     private void adjustShiftOnScrollUp(MouseWheelEvent e) {//adjust-регулировать
         shiftX = (int) (shiftX - e.getX() / scale);
         shiftY = (int) (shiftY - e.getY() / scale);
-        Map.updateMap();
+        updateShifting();
     }
 
 
@@ -116,8 +115,8 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
             deltaShiftX = e.getX() - previousMouseX;
             int sizeMapOnScreenX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
 
-            if (shiftX + deltaShiftX * Math.pow(scale, -1) <= 0 && Math.abs(shiftX + deltaShiftX * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_X - 280 - sizeMapOnScreenX) {
-                //280 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 15240 при сильном масштаировании идет искажение
+            if (shiftX + deltaShiftX * Math.pow(scale, -1) <= 0 && Math.abs(shiftX + deltaShiftX * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_X  - sizeMapOnScreenX) {
+
                 shiftX += deltaShiftX * Math.pow(scale, -1);
             }
             previousMouseX = e.getX();
@@ -128,15 +127,15 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         if (previousMouseY != 0) {
             deltaShiftY = e.getY() - previousMouseY;
             int sizeMapOnScreenY = (int) ((okno.windowHight) * Math.pow(scale, -1));
-            if (shiftY + deltaShiftY * Math.pow(scale, -1) <= 0 && Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_Y - 540 - sizeMapOnScreenY) {
-                //540 это закладываем запас по пикселям из-за коругления и наложения картинок, вообще должно быть 10640 при сильно масштаировании идет искажение
+            if (shiftY + deltaShiftY * Math.pow(scale, -1) <= 0 && Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_Y  - sizeMapOnScreenY) {
+
                 shiftY += deltaShiftY * Math.pow(scale, -1);
             }
             previousMouseY = e.getY();
         } else {
             previousMouseY = e.getY();
         }
-        Map.updateMap();
+        updateShifting();
     }
 
     private void ResetPreviousMouseCoordinates() {//previous-предыдущий
@@ -151,6 +150,10 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         g.drawImage(image, getWindowPointFromMapCoordinatesX(x), getWindowPointFromMapCoordinatesY(y), observer);
     }
 
+    public static void updateShifting(){//этот метод вызывается кадый раз когда карта обнавляется
+                                        //и вызывает метод из интерфейся ShiftingAdapter который реализуется в панели
+        okno.p.updateShifting();
+    }
     //getters and setters
 
 
@@ -159,6 +162,7 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     }
 
     public static void setScaling(boolean scaling) {
+        updateShifting();
         Shifting.scaling = scaling;
     }
 
@@ -167,6 +171,7 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     }
 
     public static void setShifting(boolean shifting) {
+        updateShifting();
         Shifting.shifting = shifting;
     }
 
@@ -201,6 +206,7 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     }
 
     public void setShiftX(int shiftX) {
+        updateShifting();
         this.shiftX = shiftX;
     }
 
@@ -209,6 +215,7 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     }
 
     public void setShiftY(int shiftY) {
+        updateShifting();
         this.shiftY = shiftY;
     }
 
@@ -217,6 +224,7 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     }
 
     public void setScale(double scale) {
+        updateShifting();
         this.scale = scale;
     }
 

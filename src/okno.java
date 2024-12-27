@@ -7,8 +7,8 @@ import javax.swing.Timer;
 public class okno extends JFrame {
 	static panel p;
 	static Menu menu;
-	public static final int windowWidth= 955;
-	public static final int windowHight= 665;
+	public static final int windowWidth= 937;
+	public static final int windowHight= 625;
 	okno() {
 		setBounds(0, 0, windowWidth, windowHight);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

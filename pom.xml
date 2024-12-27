@@ -8,22 +8,17 @@
     <artifactId>TC</artifactId>
     <version>0.0.1</version>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.5</version>
-                    <configuration>
-                        <fork>true</fork>
-                        <meminitial>1024m</meminitial>
-                        <maxmem>3072m</maxmem>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 
+    </build>
+    <profiles>
+        <profile>
+            <id>large-memory-profile</id>
+            <properties>
+                <env.MAVEN_OPTS>-Xms3048m</env.MAVEN_OPTS>
+                <env.MAVEN_OPTS>-Xmx6048m</env.MAVEN_OPTS>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
