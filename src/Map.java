@@ -8,10 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import static com.sun.corba.se.impl.util.Utility.printStackTrace;
-
 // Класс Map для работы с большими изображениями
-public class Map {
+public class Map implements ShiftingListener {
     private panel panel;
     BufferedImage imagePart;
 
@@ -57,10 +55,6 @@ public class Map {
         return reader.read(0, param); // Читаем указанную область изображения
     }
 
-    public void UpdateMap() {
-
-    }
-
     public void draw(Graphics g) {
         if (imagePart != null) {
             Shifting.drowAutoScaleAndShiftingImage(g, imagePart, 0, 0, 1500, 1000, null);
@@ -88,4 +82,8 @@ public class Map {
     }
 
 
+    @Override
+    public void updateShifting() {
+        System.out.println("dsfjsf");
+    }
 }

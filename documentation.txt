@@ -1,0 +1,28 @@
+interface ShiftingListener нужен для отслеживания изменения в классе Shifting, реализовал: Влад
+реализация ShiftingListener
+1. заимплементировать итерфейс
+2. вызвать метод addObserver и передать туда объект класс в котором мы хотим видеть вызов этого метода
+что бы удалить оповещение класса вызвать метод removeObserver и передать объект класса
+
+class HUD реализовал: Влад
+
+class Scen реализовал: Влад
+
+class GlobalLoadImg реализовал: Влад
+
+class Map реализовал: Влад
+
+class Okno реализовал: Влад
+
+class redactor реализовал: Влад
+
+class Maplocation реализовал: Влад
+
+class Shifting реализовал: Влад
+
+class panel реализовал: Влад
+
+class Pawn реализовал: Влад
+
+class MainCharacter реализовал: Влад
+

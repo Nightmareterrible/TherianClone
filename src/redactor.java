@@ -44,9 +44,9 @@ public class redactor implements MouseMotionListener, MouseListener {
     public static void main(String[] args) {
 
         GLOBALS.mode = "editor";
-        new okno();
+        new Okno();
         r = new redactor();
-        okno.p.setFocusable(true);
+        Okno.p.setFocusable(true);
 
     }
 
@@ -82,14 +82,14 @@ public class redactor implements MouseMotionListener, MouseListener {
             radBtn[i].setText(nameLocation[i]);
             radBtn[i].setBounds(240, i * 30, 100, 30);
             bg.add(radBtn[i]);
-            okno.p.add(radBtn[i]);
+            Okno.p.add(radBtn[i]);
 
         }
         radBtn[0].setSelected(true);
-        okno.p.add(btnNewButton_1);
-        okno.p.add(btnNewButton_2);
-        okno.p.addMouseListener(this);
-        okno.p.addMouseMotionListener(this);
+        Okno.p.add(btnNewButton_1);
+        Okno.p.add(btnNewButton_2);
+        Okno.p.addMouseListener(this);
+        Okno.p.addMouseMotionListener(this);
 
     }
 

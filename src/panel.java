@@ -2,20 +2,16 @@ import java.awt.Button;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 import java.io.IOException;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
-class panel extends JPanel implements ShiftingAdapter {
+class panel extends JPanel {
     Map map;
     public GlobalLoadImg globalLoadImg;
     Shifting shifting;
-    Pawn p;
-
+    Pawn pawn;
     MainCharacter mainCharacter;
 
 
@@ -24,10 +20,11 @@ class panel extends JPanel implements ShiftingAdapter {
     public panel() {
         setLayout(null);
 
+
         globalLoadImg = new GlobalLoadImg();
         shifting = new Shifting();
-
-        map = new Map   (this);
+        map = new Map(this);
+        shifting.addObserver(map);
         if(GLOBALS.mode != "editor") {
             mainCharacter = new MainCharacter();
             addMouseListener(mainCharacter);
@@ -49,8 +46,5 @@ class panel extends JPanel implements ShiftingAdapter {
     }
 
 
-    @Override
-    public void updateShifting() {// этот метод вызывается из класса Shifting он нужен чтобы информировать разные классы и обекты о то что карта изменилась
-        map.UpdateMap();
-    }
+
 }

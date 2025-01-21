@@ -1,14 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Shifting extends JFrame implements MouseMotionListener, MouseListener, MouseWheelListener {
     public static final double MAX_SCALE = 1;
 
     public static final double MIN_SCALE = 0.0625;
-    public static final int MAX_MAP_SIZE_ON_SREEN_X = (int) ((okno.windowWidth) * Math.pow(MIN_SCALE, -1));
+    public static final int MAX_MAP_SIZE_ON_SREEN_X = (int) ((Okno.windowWidth) * Math.pow(MIN_SCALE, -1));
 
-    public static final int MAX_MAP_SIZE_ON_SREEN_Y = (int) ((okno.windowHight) * Math.pow(MIN_SCALE, -1));
+    public static final int MAX_MAP_SIZE_ON_SREEN_Y = (int) ((Okno.windowHeight) * Math.pow(MIN_SCALE, -1));
     int previousMouseX = 0;//previous-предыдущий
     int deltaShiftX = 0;
     static int shiftX = 0;
@@ -90,12 +93,12 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     }
 
     private void adjustShiftOnScrollDown(MouseWheelEvent e) {//adjust-регулировать
-        int sizeMapOnScreenX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
-        int sizeMapOnScreenY = (int) ((okno.windowHight) * Math.pow(scale, -1));
-        if (Math.abs(shiftX + deltaShiftX * Math.pow(scale / 2, -1)) >= MAX_MAP_SIZE_ON_SREEN_X  - sizeMapOnScreenX) {
+        int sizeMapOnScreenX = (int) ((Okno.windowWidth) * Math.pow(scale, -1));
+        int sizeMapOnScreenY = (int) ((Okno.windowHeight) * Math.pow(scale, -1));
+        if (Math.abs(shiftX + deltaShiftX * Math.pow(scale / 2, -1)) >= MAX_MAP_SIZE_ON_SREEN_X - sizeMapOnScreenX) {
             shiftX = (MAX_MAP_SIZE_ON_SREEN_X - sizeMapOnScreenX) * -1 / 2;
         }
-        if (Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) >= MAX_MAP_SIZE_ON_SREEN_Y  - sizeMapOnScreenY) {
+        if (Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) >= MAX_MAP_SIZE_ON_SREEN_Y - sizeMapOnScreenY) {
 
             shiftY = (MAX_MAP_SIZE_ON_SREEN_Y - sizeMapOnScreenY) * -1 / 2;
         }
@@ -113,9 +116,9 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         //   X   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (previousMouseX != 0) {
             deltaShiftX = e.getX() - previousMouseX;
-            int sizeMapOnScreenX = (int) ((okno.windowWidth) * Math.pow(scale, -1));
+            int sizeMapOnScreenX = (int) ((Okno.windowWidth) * Math.pow(scale, -1));
 
-            if (shiftX + deltaShiftX * Math.pow(scale, -1) <= 0 && Math.abs(shiftX + deltaShiftX * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_X  - sizeMapOnScreenX) {
+            if (shiftX + deltaShiftX * Math.pow(scale, -1) <= 0 && Math.abs(shiftX + deltaShiftX * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_X - sizeMapOnScreenX) {
 
                 shiftX += deltaShiftX * Math.pow(scale, -1);
             }
@@ -126,8 +129,8 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         //   Y   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (previousMouseY != 0) {
             deltaShiftY = e.getY() - previousMouseY;
-            int sizeMapOnScreenY = (int) ((okno.windowHight) * Math.pow(scale, -1));
-            if (shiftY + deltaShiftY * Math.pow(scale, -1) <= 0 && Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_Y  - sizeMapOnScreenY) {
+            int sizeMapOnScreenY = (int) ((Okno.windowHeight) * Math.pow(scale, -1));
+            if (shiftY + deltaShiftY * Math.pow(scale, -1) <= 0 && Math.abs(shiftY + deltaShiftY * Math.pow(scale, -1)) <= MAX_MAP_SIZE_ON_SREEN_Y - sizeMapOnScreenY) {
 
                 shiftY += deltaShiftY * Math.pow(scale, -1);
             }
@@ -146,15 +149,15 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
     public static void drowAutoScaleAndShiftingImage(Graphics g, Image image, int x, int y, int width, int height, java.awt.image.ImageObserver observer) {
         g.drawImage(image, getWindowPointFromMapCoordinatesX(x), getWindowPointFromMapCoordinatesY(y), getDrowWidth(width), getDrowHeight(height), observer);
     }
+
     public static void drowAutoScaleAndShiftingImage(Graphics g, Image image, int x, int y, java.awt.image.ImageObserver observer) {
         g.drawImage(image, getWindowPointFromMapCoordinatesX(x), getWindowPointFromMapCoordinatesY(y), observer);
     }
 
-    public static void updateShifting(){//этот метод вызывается кадый раз когда карта обнавляется
-                                        //и вызывает метод из интерфейся ShiftingAdapter который реализуется в панели
-        okno.p.updateShifting();
-    }
-    //getters and setters
+
+
+
+
 
 
     public static boolean isScaling() {
@@ -223,9 +226,32 @@ public class Shifting extends JFrame implements MouseMotionListener, MouseListen
         return scale;
     }
 
+
     public void setScale(double scale) {
         updateShifting();
         this.scale = scale;
     }
+
+
+    private static List<ShiftingListener> observers = new ArrayList<>();//реализвция метода update для интерфейса ShiftingListener
+
+    public void addObserver(ShiftingListener observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(ShiftingListener observer) {
+        observers.remove(observer);
+    }
+
+    public static void notifyObservers() {
+        for (ShiftingListener observer : observers) {
+            observer.updateShifting();
+        }
+    }
+
+    public static void updateShifting() {
+        notifyObservers(); // Уведомляем всех наблюдателей
+    }
+
 
 }
