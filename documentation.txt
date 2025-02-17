@@ -1,28 +1,131 @@
-interface ShiftingListener нужен для отслеживания изменения в классе Shifting, реализовал: Влад
-реализация ShiftingListener
+interface Camera.CameraListener нужен для отслеживания изменения в классе Camera.Shifting, реализовал: Влад
+реализация Camera.CameraListener
 1. заимплементировать итерфейс
 2. вызвать метод addObserver и передать туда объект класс в котором мы хотим видеть вызов этого метода
 что бы удалить оповещение класса вызвать метод removeObserver и передать объект класса
 
-class HUD реализовал: Влад
+class GameMode.HUD реализовал: Влад
 
-class Scen реализовал: Влад
+class SceneHUD реализовал: Влад
 
-class GlobalLoadImg реализовал: Влад
+class GameMode.GameMode реализовал: Влад
+что бы начать работать с панелями стоит создать класс геем мод он ответсвенен за управление сценами, худам и повдением игры, лучше всего создать класс Factory
+и создать внутри него классс GameMode.GameMode конструктор которого принеммает JLayeredPane без которого он не сможет работать
 
-class Map реализовал: Влад
+методы:
+    public ArrayList<String> getNameSceneNowSelected() - позволяет получить список сцен которые сейчас активны
 
-class Okno реализовал: Влад
 
-class redactor реализовал: Влад
+    public GameMode.HUD getHud() - метод позволяет получить объект класса GameMode.HUD (смотреть раздел GameMode.HUD)
+
+
+    public void setHud(GameMode.HUD hud) - метод позволяет установить объект класса GameMode.HUD которым будет управлять GameMode.GameMode
+
+
+
+    public void createScene(String name) - метод который создает сцены с выбраным именем а также добавляет его срау в лист сцен
+    Пример:
+        gameMode.createScene(MAIN_GAME_SCENE);
+
+    public GameMode.Scene getSceneByName(String name)  - метод который находит сцену по имени если сцены с таким именем не существует он вернет null и напишет сообщение в консоль
+
+
+    public void deleteScene(GameMode.Scene s) - удадяет сцену из списка сцен, однако объект этой сцены все еще будет существовать
+
+
+    public void removeScen(String name) - метод который позваляет удалить сцену с экрана
+
+
+
+    public void selectScene(String name, Integer JLayeredPaneLayer ,int position) {  - метод позволяющий активировать сцену что бы она появявилась на экране
+    JLayeredPaneLayer это слои на котрых рахмеща.тся объекты получить такой слой можно с помощю JLayeredPane. (пример: JLayeredPane.DEFAULT_LAYER.DEFAULT_LAYER)
+    Для обычных сцен по типу основной игровой стоит использовать JLayeredPane.DEFAULT_LAYER
+    position - это Z-Order в JLayeredPane подробнее про него можно почитать в интеренете
+
+
+
+    public ArrayList<GameMode.Scene> getListOfScene()  - возвращает спписок сцен которые существуют внутри класса GameMode.GameMode
+
+    public void setListOfScene(ArrayList<GameMode.Scene> listOfScene) установить список сцен которые усществуют в GameMode.GameMode
+
+
+
+class GameMode.Scene реализовал: Влад
+    это класс кторым упрвляет GameMode.GameMode он хранит в себе всю информацию о сцене
+    каждая сцена имеет свое имя и доступ к кажой сцене имеется по имени
+    каждая сцена хранит в себе JPanel который и отрисовывется для сложных сцен, можно реализовывать свой класс наследик класса JPanel и установить в сцену с помощю метода
+    setScene()
+    также к каждой сцене можно привязать свой GameMode.HUD которорый будет отображатся вместе с сценой
+    у сцены есть интерфейс GameMode.Drawable(читать раздел interface GameMode.Drawable)
+    сцены мужно созжать в классе GameMode.GameMode с помощью метода createScene(название сцены)
+    конструктор класса GameMode.Scene принемает имя сцены, имя это идефекатор сцены
+    каждая сена хранит в себе поля
+    JPanel scenPanel - панель сцены
+    String name = имя
+    ArrayList<String> hudSceneNames - список SceneHUD а именно их индеффекаторы котрые будут отображаться вместе с сценами
+    ArrayList<GameMode.Drawable> drawObjects - обекты к которым подключен интерфейс GameMode.Drawable (читать раздел interface GameMode.Drawable)
+
+
+    public void addComponentToPanel(Object object) - метод через который можно дабовать компонент панели и/или проиницыализировать панель
+
+    public JPanel getPanel() - получить панель
+
+    public void setPanel(JPanel scenPanel) -установить панель
+
+    public String getName() - получить имя сцены
+
+    public void setName(String name) - установить/переименовать сцену
+
+    public ArrayList<String> getHudSceneNames() - получить список SceneHUD пожключенных к этой сцене
+
+    public void addHUD(String hudSceneNames) - привязать SceneHUD к этой сцене
+
+    public void removeHUD(String hudSceneNames) - удалить связь sceneHUD с этой панелью
+
+    public ArrayList<GameMode.Drawable> getDrawObjects() - получить все объекты на которые применяется метод drow(g) (читать раздел interface GameMode.Drawable)
+
+    public void setDrawObjects(ArrayList<GameMode.Drawable> drawObjects) - установить список объектов которые ресуются (читать раздел interface GameMode.Drawable)
+
+    public void addDrawable(GameMode.Drawable drawable) - добавить объект который будет рисоваться
+
+    public void removeDrawable(GameMode.Drawable drawable) - удалить объект которыый будет рисвоваться
+
+
+
+    interface GameMode.Drawable реализовал: Влад
+        этот интерфейс предназначен для классов в которые мы хотим рисвоать обекты
+        что бы нарисовать какой либо объект нам нужно имплементировать этот интерфейс в том классе где нам надо рисовать
+        затем нам надо реализовать самому класс панели наследываный от JPanel и реализовать метод paintComponent
+        в метод paintComponent надо добавить такие строки:
+        if(scene!= null) {
+            for (GameMode.Drawable drawable : scene.getDrawObjects()) {
+                drawable.draw(g);
+            }
+        }
+        также нам надо ссоздать перемную scene и добавить туда ссылку на объект класса GameMode.Scene в котором и находиться наша
+        панель
+        нам осталось только добавить объекты которые мы будем рисовать в список объектов для отрисовки, это можно
+        сделать с помощю метода addDrawable((сюда мы просто передаем ссылку на объек который
+        хоти рисовать))
+
+
+
+
+class game.GlobalLoadImg реализовал: Влад
+
+class deletedClass.GameMap реализовал: Влад
+
+class game.Okno реализовал: Влад
+
+class Redactor.Redactor реализовал: Влад
 
 class Maplocation реализовал: Влад
 
-class Shifting реализовал: Влад
+class Camera.Shifting реализовал: Влад
 
-class panel реализовал: Влад
+class game.MainGamePanel реализовал: Влад
 
-class Pawn реализовал: Влад
+class PawnObject.PawnObject реализовал: Влад
 
-class MainCharacter реализовал: Влад
+class PawnObject.MainCharacter реализовал: Влад
 
