@@ -38,7 +38,7 @@ public class Camera implements MouseListener, MouseMotionListener, MouseWheelLis
      * @param initialHeight Высота игрового мира
      */
     public Camera(int initialWidth, int initialHeight) {
-        this.scaleLevel = 0.25;
+        this.scaleLevel = 1;
         this.worldBounds = new Rectangle(0, 0, initialWidth, initialHeight);
         System.out.println("Camera has bean created");
     }

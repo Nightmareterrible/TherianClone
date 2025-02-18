@@ -22,23 +22,24 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MapLoder extends JPanel implements CameraListener, Drawable {
     Camera camera;
 
-    static int frames = 0;
-    static int fps = 0;
-    private static Map<String, BufferedImage> mapOfBfImage = new HashMap<>();
+
+    private static Map<String, BufferedImage> mapOfBfImage = new ConcurrentHashMap<>();
     private static Map<String, ImageInputStream> mapOfInpStream = new HashMap<>();
 
     private static LinkedList<String> cacheNameStream = new LinkedList<>();
-
+    private static LinkedList<String> cacheNameImage = new LinkedList<>();
 
     public MapLoder(Camera camera) {
         this.camera = camera;
         loder(camera);
     }
 
+    final static double TILE_WIDTH = 640;
+    final static double TILE_HIGHT = 360;
+
     public static void loder(Camera camera) {
-        final int MAX_COUNT_TILE_ON_WINDOW = 4;
-        final int TILE_WIDTH = 640;
-        final int TILE_HIGHT = 360;
+        final int MAX_COUNT_TILE_ON_WINDOW = 6;
+
         Runnable task = new Runnable() {
             int updatTime = 1000 / 10;
             double scalel;
@@ -49,42 +50,34 @@ public class MapLoder extends JPanel implements CameraListener, Drawable {
                 while (true) {
                     scalel = camera.getScaleLevel();
                     viewport = camera.getViewport();
-                    int tileX = (int) Math.floor(viewport.getX() / TILE_WIDTH);//получение тайлов которые мы видим
-                    int tileY = (int) Math.floor(viewport.getY() / TILE_HIGHT);
+                    int tileX = (int) Math.floor(camera.getWorldX() / TILE_WIDTH);//получение тайлов которые мы видим
+                    int tileY = (int) Math.floor(camera.getWorldY() / TILE_HIGHT);
+
                     int lodLevel = 0;//TODO получение уровня приблежения
+                    for (int i = tileX - 1; i < MAX_COUNT_TILE_ON_WINDOW + tileX; i++) {
+                        for (int j = tileY - 1; j < MAX_COUNT_TILE_ON_WINDOW + tileY; j++) {
+                            if (i <= 23 && j <= 27 && i >= 0 && j >= 0) {
+                               // System.out.println(i + "      " + j);
+                                if (!mapOfBfImage.containsKey((i) + "," + (j))) {
+                                    try {
+                                        mapOfBfImage.put(i + "," + j, ImageIO.read(new File("tiles/LOD0/tile_" + (i) + "_" + (j) + ".png")));
+                                        cacheNameImage.add(i + "," + j);
 
-
-                    for (int i = tileX; i < MAX_COUNT_TILE_ON_WINDOW + tileX; i++) {
-                        for (int j = tileY; j < MAX_COUNT_TILE_ON_WINDOW + tileY; j++) {
-                            System.out.println("Thread-0 update    x= "+(tileX + i )+"    j= "+(tileY + j ));
-                            if (tileX + i <= 23 && tileY + j <= 27) {
-                                if (!mapOfBfImage.containsKey((tileX + i) + "," + (tileY + j))) {
-                                    if (mapOfInpStream.containsKey((tileX + i) + "," + (tileY + j))) {
-                                        ImageReader reader = ImageIO.getImageReaders(mapOfInpStream.get(i + "," + j)).next();
-                                        try {
-                                            mapOfBfImage.put(tileX + "," + tileY, reader.read(0));
-                                        } catch (IOException e) {
-                                            throw new RuntimeException(e);
+                                        if (cacheNameImage.size() > 64) {
+                                            System.out.println("CLEARNG   "+cacheNameImage.size() +"    "+cacheNameImage.getFirst());
+                                            mapOfBfImage.remove(cacheNameImage.getFirst());
+                                            cacheNameImage.removeFirst();
                                         }
-                                    } else {
-                                        BufferedImage bf = null;
-                                        try {
-                                            bf = ImageIO.read(new File("tiles/LOD" + lodLevel + "/tile_" + (tileX + i) + "_" + (tileY + j) + ".png"));
-                                        } catch (IOException e) {
-                                            System.out.println("not have img" + "                  " + "tiles/LOD" + lodLevel + "/tile_" + (tileX + i) + "_" + (tileY + j) + ".png");
-                                            // throw new RuntimeException(e);
-
-                                        }
-
-                                        mapOfBfImage.put((tileX + i) + "," + (tileY + j), bf);
-                                        bf.flush();
-                                        System.out.println((tileX + i) + "," + (tileY + j));
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
                                     }
+                                }else{
+                                    cacheNameImage.remove(i + "," + j);
+                                    cacheNameImage.add(i + "," + j);
                                 }
                             }
                         }
                     }
-                    //             System.out.println("new cicel lode");
                     try {
                         Thread.sleep(updatTime);
                     } catch (InterruptedException e) {
@@ -104,8 +97,10 @@ public class MapLoder extends JPanel implements CameraListener, Drawable {
 
     }
 
+
     @Override
     public void draw(Graphics g) throws IOException {
+
         for (String name : mapOfBfImage.keySet()) {
             int x = (int) (Integer.parseInt(name.split(",")[0]) * 640 - camera.getWorldX());
             int y = (int) (Integer.parseInt(name.split(",")[1]) * 360 - camera.getWorldY());
@@ -114,5 +109,6 @@ public class MapLoder extends JPanel implements CameraListener, Drawable {
             g.drawString(name, x + 100, y + 100);
 
         }
+
     }
 }

@@ -39,7 +39,7 @@ class MainGamePanel extends GamePanel {
         addDrawable(ml);
 
 
-        GameObject go;
+       GameObject go;
         for (int i =0;i < 100;i+=2){
             go = new GameObject(200*i,200,200,200,null);
             addGameObject(go);
@@ -63,9 +63,23 @@ class MainGamePanel extends GamePanel {
     // -------------------------------------------------------
 
 
+    private long lastTime = System.currentTimeMillis();
+    private int frames = 0;
+    private int fps = 0;
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        frames++;
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastTime >= 1000) {
+            fps = frames;
+            frames = 0;
+            lastTime = currentTime;
+        }
+        // Отображение FPS
+        g.setColor(Color.BLACK);
+        g.drawString("FPS: " + fps, 10, 20);
     }
 }

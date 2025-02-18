@@ -21,11 +21,10 @@ public class Okno extends JFrame implements Runnable {
 
         setVisible(true);
         int fps = (int) (1000 / 60);// fps
-        Timer repaintTimer = new Timer(fps, new ActionListener() {
+        Timer repaintTimer = new Timer(5, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 layeredPane.repaint();
             }
         });
